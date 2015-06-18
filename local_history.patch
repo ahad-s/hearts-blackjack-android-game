@@ -1,0 +1,1131 @@
+Index: app/src/main/res/layout/heartsgame.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/heartsgame.xml	(revision )
++++ app/src/main/res/layout/heartsgame.xml	(revision )
+@@ -53,14 +53,14 @@
+         android:visibility="gone"
+         android:layout_toLeftOf="@id/arrow_pass"/>
+ 
+-    <ImageView
+-        android:layout_width="150dp"
+-        android:layout_height="60dp"
+-        android:id="@+id/cannot_pass_this_turn"
+-        android:src="@drawable/cannot_pass_this_Turn"
+-        android:layout_centerVertical="true"
+-        android:visibility="gone"
+-        android:layout_toLeftOf="@id/arrow_pass"/>
++    <!--<ImageView-->
++        <!--android:layout_width="150dp"-->
++        <!--android:layout_height="60dp"-->
++        <!--android:id="@+id/cannot_pass_this_turn"-->
++        <!--android:src="@drawable/cannot_pass_this_turn"-->
++        <!--android:layout_centerVertical="true"-->
++        <!--android:visibility="gone"-->
++        <!--android:layout_toLeftOf="@id/arrow_pass"/>-->
+ 
+ 
+ 
+@@ -77,6 +77,13 @@
+             android:layout_marginBottom="6dp"
+             android:id="@+id/current_hand_space"
+             android:background="#00FF76">
++
++            <!--<ImageView-->
++                <!--android:layout_width="100dp"-->
++                <!--android:layout_height="100dp"-->
++                <!--android:id="@+id/testview123"-->
++                <!--android:visibility="gone"-->
++                <!--android:src="@drawable/clubs_ace_suite1"/>-->
+ 
+         </RelativeLayout>
+ 
+\ No newline at end of file
+Index: app/src/main/res/drawable/cannot_pass_this_Turn.png
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- app/src/main/res/drawable/cannot_pass_this_Turn.png	(revision )
++++ app/src/main/res/drawable/cannot_pass_this_turn.png	(revision )
+@@ -1,0 +1,0 @@
+Index: app/src/main/java/com/example/potato/cards/Deck.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- app/src/main/java/com/example/potato/cards/Deck.java	(revision )
++++ app/src/main/java/com/example/potato/cards/Deck.java	(revision )
+@@ -96,6 +96,7 @@
+         return currentCards.size();
+     }
+ 
++    // graveyard actually just means that the card is in play/not in the deck anymore
+     public Card getTopCard(){
+         Card toReturn = currentCards.remove(0);
+         currentCardsGraveyard.add(toReturn);
+Index: app/src/main/java/com/example/potato/cards/Player.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- app/src/main/java/com/example/potato/cards/Player.java	(revision )
++++ app/src/main/java/com/example/potato/cards/Player.java	(revision )
+@@ -1,6 +1,7 @@
+ package com.example.potato.cards;
+ 
+ import java.util.ArrayList;
++import java.util.Random;
+ import java.util.TreeSet;
+ 
+ /**
+@@ -10,9 +11,15 @@
+ 
+     int currentScore = 0;
+ 
++    protected int toLeft;
++    protected int toRight;
++    protected int toAcross;
++
+     ArrayList<Card> cardsInHand = new ArrayList<>(13);
+ 
++    int playerNumber;
+ 
++
+     TreeSet<Card> clubsInHand = new TreeSet<>();
+     TreeSet<Card> diamondsInHand = new TreeSet<>();
+     TreeSet<Card> spadesInHand = new TreeSet<>();
+@@ -23,12 +30,29 @@
+     }
+ 
+     protected void resetCardList(){
++        clubsInHand.clear();
++        diamondsInHand.clear();
++        spadesInHand.clear();
++        heartsInHand.clear();
++
+         cardsInHand.clear();
+     }
+ 
+ 
++
+     abstract boolean isHuman();
+ 
++    abstract ArrayList<Card> getCardsToPass();
++
++
++    protected void passCardsTo(ArrayList<Card> toAddFrom, Player receiver){
++        for (Card c: toAddFrom){
++            receiver.addCard(toAddFrom.remove(toAddFrom.indexOf(c))); // removes from list and adds it to the 'receiver'
++        }
++        // arranges receiver's cards
++        receiver.arrangeCards();
++    }
++
+     protected void addCard(Card c) {
+         switch(c.getSuite()){
+             case "hearts":
+@@ -46,8 +70,18 @@
+ 
+     }
+ 
++    protected Card getRemoveRandomCardFromHand(){
++        Random r = new Random();
++        int indexToRetrieve = r.nextInt(cardsInHand.size());
++        return cardsInHand.remove(indexToRetrieve);
++
++
++    }
++
+     // this is done in another piece so the respective suite sets aren't anonymous
+     void arrangeCards(){
++        cardsInHand.clear();
++
+         cardsInHand.addAll(clubsInHand);
+         cardsInHand.addAll(diamondsInHand);
+         cardsInHand.addAll(spadesInHand);
+Index: app/src/main/java/com/example/potato/cards/HControl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/potato/cards/HControl.java	(revision )
++++ app/src/main/java/com/example/potato/cards/HControl.java	(revision )
+@@ -31,13 +31,16 @@
+ 
+     final int NUM_PLAYERS = 4;
+     final int MAX_PASSING_CARDS = 3;
++    int selectedToPass = 0;
+ 
++
+     private Deck gameDeck;
+     private ScoreBoard scoreBoard;
+     private SharedPreferences sharedPreferences;
+     private SharedPreferences.Editor prefEditor;
+     private int currentSuite;
+     boolean heartsBroken; // true == broken, false == not broken yet in round
++    boolean inPassPhase = false;
+ 
+     private DisplayMetrics dm;
+     private Display display;
+@@ -56,6 +59,7 @@
+     boolean passRight = false;
+     boolean passAcross = false;
+     boolean passNone = false;
++    boolean passPhaseGlowActivated = false;
+ 
+     ImageView passArrow;
+ 
+@@ -70,7 +74,6 @@
+         setContentView(R.layout.heartsgame);
+ 
+ 
+-
+         sharedPreferences = getSharedPreferences(MainActivity.DEFAULT_SHARED_DATABASE, MODE_PRIVATE);
+         prefEditor = sharedPreferences.edit();
+ 
+@@ -94,49 +97,25 @@
+         scoreBoard = new ScoreBoard();
+ 
+         // populate players
+-        humanPlayer = new PlayerHuman();
++        humanPlayer = new PlayerHuman(tempToPass);
+         players[0] = humanPlayer;
+-        for (int i = 1; i < NUM_PLAYERS; i++)
+-            players[i] = new PlayerAI();
++        for (int i = 1; i < NUM_PLAYERS; i++) {
++            players[i] = new PlayerAI(i);
++        }
+ 
++        //must do at beginning of each round
++        resetGame();
+ 
+-
+         distributeCardsToPlayers();
+ 
+ 
+     }
+ 
+-//    private void animationTest222(){
+-//        ImageView v = (ImageView) findViewById(R.id.testimageview);
+-//        v.setBackground(getResources().getDrawable(getResources().getIdentifier("clubs_jack_suite1", "drawable", getPackageName())));
+-//        v.setVisibility(View.VISIBLE);
+-//
+-//
+-//        Rect rectf = new Rect();
+-//        v.getLocalVisibleRect(rectf);
+-//
+-//        Log.d("@@WIDTH        :", String.valueOf(rectf.width()));
+-//        Log.d("@@HEIGHT       :", String.valueOf(rectf.height()));
+-//        Log.d("left         :", String.valueOf(rectf.left));
+-//        Log.d("right        :", String.valueOf(rectf.right));
+-//        Log.d("top          :", String.valueOf(rectf.top));
+-//        Log.d("bottom       :", String.valueOf(rectf.bottom));
+-//
+-//        int[] location = new int[2];
+-//        v.getLocationOnScreen(location);
+-//
+-//        // gets from top left == set as deck later
+-//        int y = -(location[1]) + (v.getHeight()/2); // top left y = dm.heightpixels
+-//        int x = - (location[0]);
+-//
+-//        Animation tempAni = new TranslateAnimation(x, 0, y, 0);
+-////        Animation tempAni = AnimationUtils.loadAnimation(this, R.anim.push_right_in);
+-//        tempAni.setDuration(1000);
+-//        v.startAnimation(tempAni);
+-//    }
+ 
+-    private void distributeCardsToPlayers(){
++    private void resetGame(){
+ 
++        inPassPhase = true;
++
+         // have to do this at beginning of each round
+         gameDeck.resetCards();
+         gameDeck.resetCardImages();
+@@ -150,14 +129,22 @@
+         for (int i = 0; i < numCards; i++){
+             for (Player p: players)
+                 p.addCard(gameDeck.getTopCard());
++
+         }
+ 
+         humanPlayer.arrangeCards();
+ 
++//        for (Player p: players)
++//            p.arrangeCards(); // human player is only one where it matters which card is distributed in what order but all players need this
++
++    }
++
++    private void distributeCardsToPlayers(){ // just distributes visually to humans
++
+         ImageButton cardImage;
+         Card currentCard;
+ 
+-        // just adds them
++        // adds all cards in hand to cardspace_layout
+         for (int i = 0; i < humanPlayer.getCardsInHand().size(); i++){
+             currentCard = humanPlayer.getCardsInHand().get(i);
+ 
+@@ -166,20 +153,27 @@
+ 
+             String ident = currentCard.getSuite() + "_" + currentCard.getStringValue() + "_suite" + gameDeck.getCurrentSuite();
+             cardImage.setImageResource(getResources().getIdentifier(ident, "drawable", getPackageName()));
+-            cardImage.setVisibility(View.INVISIBLE);
++            cardImage.setVisibility(View.INVISIBLE); // TODO: FIX???
+             cardImage.setId(View.generateViewId()); // I SPENT 1-2 HOURS TRYING TO FIGURE OUT WHY MY CODE WORKING -- REALIZED YOU NEED TO SET YOUR OWN ID TO DYNAMICALLY GENERATED VIEWS omg
+ 
+-            cardSpaceLayout.addView(cardImage, new RelativeLayout.LayoutParams(Math.round(66.3f * dm.density), ViewGroup.LayoutParams.WRAP_CONTENT));
++            cardSpaceLayout.addView(cardImage, new RelativeLayout.LayoutParams(Math.round(66.3f * dm.density), Math.round(90f * dm.density)));
+ 
+-//            prepareToPass(currentCard);
+         }
+ 
+-        moveToHandAnimation = AnimationUtils.loadAnimation(this, R.anim.push_right_in);
+ 
++        // start of "pass phase" and setting up cards
++
+         adjustAllViews();
+ 
++        findViewById(R.id.testview123).setVisibility(View.VISIBLE);
+ 
+-        // TODO: ADD ANIMATIONS
++//        if (inPassPhase) // should only happen once at beginning of a round, and is set to true again after the deck is shuffled/"resetGame" is called
++//            passPhaseStart();
++
++
++
++        // TODO: ADD ANIMATIONS FOR CARDS COMING IN
++//        moveToHandAnimation = AnimationUtils.loadAnimation(this, R.anim.push_right_in);
+ //        for (int i = 0; i < cardSpaceLayout.getChildCount(); i++) {
+ //            tempChild = (ImageButton) cardSpaceLayout.getChildAt(i);
+ //            tempChild.setVisibility(View.VISIBLE);
+@@ -188,6 +182,26 @@
+     }
+ 
+ 
++
++    private void passPhaseStart(){
++
++        inPassPhase = false;
++
++        adjustAllViews();
++
++//        passPhaseActivate();
++
++
++        passArrow.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                if (selectedToPass == 3 && inPassPhase){
++                    passPhaseFinish();
++                }
++            }
++        });
++    }
++
+     // dynamically resets view for the beginning of a hand
+     private void adjustAllViews(){
+         for (int i = 0; i < cardSpaceLayout.getChildCount(); i++){
+@@ -206,13 +220,12 @@
+             tempChild.setLayoutParams(newParams);
+             tempChild.setVisibility(View.VISIBLE);
+ 
+-            tempChild.setOnClickListener(new View.OnClickListener(){
++            tempChild.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     if (!tempToPass.contains(getCardAssociatedWithImage(v))) {
+                         addPotentialCardToPass(v);
+-                    }
+-                    else if (tempToPass.contains(getCardAssociatedWithImage(v))){
++                    } else if (tempToPass.contains(getCardAssociatedWithImage(v))) {
+                         removePotentialCardToPass(v);
+                     }
+                 }
+@@ -222,43 +235,8 @@
+ //            tempChild.setOnClickListener(new View.OnClickListener() {
+ //                @Override
+ //                public void onClick(View v) {
+-//                    int toRemove = cardSpaceLayout.indexOfChild(v);
+-//                    if (toRemove == 0){
+-//                        if (cardSpaceLayout.getChildCount() > 1) {
+-//                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(cardSpaceLayout.getChildAt(toRemove + 1).getLayoutParams());
+-//                            params.removeRule(RelativeLayout.RIGHT_OF);
+-//                            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+-//                            params.setMargins(0, 0, 0, 0);
+-//                            cardSpaceLayout.getChildAt(toRemove + 1).setLayoutParams(params);
+ //
+-//                            cardSpaceLayout.removeView(v);
+-//                        }
++//                }
+-//                        else
+-//                            cardSpaceLayout.removeView(v);
+-//
+-//                    }
+-//                    else{
+-//
+-//                        if (toRemove != cardSpaceLayout.getChildCount() - 1) {
+-//                            ImageButton onRight = (ImageButton) cardSpaceLayout.getChildAt(toRemove + 1);
+-//                            ImageButton onLeft = (ImageButton) cardSpaceLayout.getChildAt(toRemove - 1);
+-//
+-//                            cardSpaceLayout.removeView(v);
+-//
+-//                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(onRight.getLayoutParams());
+-//                            params.removeRule(RelativeLayout.RIGHT_OF);
+-//                            params.addRule(RelativeLayout.RIGHT_OF, onLeft.getId());
+-//                            params.leftMargin -= Math.round(40 * dm.density);
+-//                            onRight.setLayoutParams(params);
+-//
+-//                        }
+-//                        else{
+-//                            cardSpaceLayout.removeView(v);
+-//                        }
+-//                    }
+-//
+-//                }
+-//
+ //            });
+ 
+ 
+@@ -266,6 +244,100 @@
+ 
+     }
+ 
++    private void passPhaseFinish(){
++        if (passLeft){
++            for (Player p: players){
++                p.passCardsTo(p.getCardsToPass(), players[p.toLeft - 1]); // have to do p.toLeft-1 since all player numbers assume 1, 2, 3, 4
++            }
++
++            humanPlayer.arrangeCards();
++
++            distributeCardsToPlayers();
++
++            passLeft = false;
++            passRight = true;
++
++        }
++        else if (passRight){
++            for (Player p: players){
++                p.passCardsTo(p.getCardsToPass(), players[p.toRight - 1]); // have to do p.toLeft-1 since all player numbers assume 1, 2, 3, 4
++            }
++
++            humanPlayer.arrangeCards();
++
++            distributeCardsToPlayers();
++
++            passRight = false;
++            passAcross = true;
++
++        }
++        else if (passAcross){
++            for (Player p: players){
++                p.passCardsTo(p.getCardsToPass(), players[p.toAcross - 1]); // have to do p.toLeft-1 since all player numbers assume 1, 2, 3, 4
++            }
++
++            humanPlayer.arrangeCards();
++
++            distributeCardsToPlayers();
++
++            passAcross = false;
++            passNone = true;
++
++        }
++        else if (passNone){
++            passNone = false;
++            passLeft = true;
++        }
++
++        inPassPhase = false;
++
++    }
++
++
++
++
++    // use for when round starts
++    // removes card and aligns the rest of the cards properly -- sort of like removing a card and then dynamically readjusting every card that isn't in place
++    private void removeCardProperly(View v){
++
++        int toRemove = cardSpaceLayout.indexOfChild(v);
++        if (toRemove == 0){
++            if (cardSpaceLayout.getChildCount() > 1) {
++                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(cardSpaceLayout.getChildAt(toRemove + 1).getLayoutParams());
++                params.removeRule(RelativeLayout.RIGHT_OF);
++                params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
++                params.setMargins(0, 0, 0, 0);
++                cardSpaceLayout.getChildAt(toRemove + 1).setLayoutParams(params);
++
++                cardSpaceLayout.removeView(v);
++            }
++            else
++                cardSpaceLayout.removeView(v);
++
++        }
++        else{
++
++            if (toRemove != cardSpaceLayout.getChildCount() - 1) {
++                ImageButton onRight = (ImageButton) cardSpaceLayout.getChildAt(toRemove + 1);
++                ImageButton onLeft = (ImageButton) cardSpaceLayout.getChildAt(toRemove - 1);
++
++                cardSpaceLayout.removeView(v);
++
++                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(onRight.getLayoutParams());
++                params.removeRule(RelativeLayout.RIGHT_OF);
++                params.addRule(RelativeLayout.RIGHT_OF, onLeft.getId());
++                params.leftMargin -= Math.round(40 * dm.density);
++                onRight.setLayoutParams(params);
++
++            }
++            else{
++                cardSpaceLayout.removeView(v);
++            }
++        }
++
++    }
++
++
+     private Card getCardAssociatedWithImage(View v){
+         for (int i = 0; i < humanPlayer.getCardsInHand().size(); i++){
+             if (humanPlayer.getCardsInHand().get(i).hasThisImage((ImageButton) v))
+@@ -274,7 +346,6 @@
+         return null;
+     }
+ 
+-    int selectedToPass = 0;
+ 
+     private void addPotentialCardToPass(View view){
+         if (selectedToPass < 3) {
+@@ -285,80 +356,93 @@
+             tempToPass.add(getCardAssociatedWithImage(toPass));
+ 
+             toPass.setTranslationY(-Math.round(30 * dm.density));
+-            toPass.setColorFilter(Color.RED);
++//            toPass.setColorFilter(Color.RED); // TODO: MAKE THIS GLOWING ON THE OUTSIDE OR CHANGE ALPHA OR SOMETHING ???
+         }
+         else{
+             mustPassThreeCards();
+         }
+ 
+         if (selectedToPass == 3){
+-            passPhase();
++            passPhaseActivate();
+         }
+ 
+     }
+ 
+-    private void mustPassThreeCards(){
+-        mustSelectThreeCardsImage.setVisibility(View.VISIBLE);
+ 
+-        mustSelectThreeCardsImage.setOnClickListener(new View.OnClickListener() {
+-            @Override
+-            public void onClick(View v) {
+-                mustSelectThreeCardsImage.setVisibility(View.GONE);
+-            }
+-        });
+ 
+-        new Handler().postDelayed(new Runnable() {
+-            @Override
+-            public void run() {
+-                mustSelectThreeCardsImage.setVisibility(View.GONE);
++    public void removePotentialCardToPass(View view){
++
++        if (selectedToPass == 3){
++            passPhaseDeActivate();
+-            }
++        }
+-        }, 3000);
+-    }
+ 
+-    public void removePotentialCardToPass(View view){
+         selectedToPass--;
+         ImageButton toRemovePass = (ImageButton) view;
+ 
+         tempToPass.remove(getCardAssociatedWithImage(toRemovePass));
+         toRemovePass.setTranslationY(0);
+-        toRemovePass.clearColorFilter();
++//        toRemovePass.clearColorFilter();
+ 
+ 
+     }
+ 
+ 
+ 
+-    private void passPhase(){
++    private void passPhaseActivate(){
+ 
+-        if (passLeft){
++        passPhaseGlowActivated = true;
+ 
+-
+-
+-            passLeft = false;
+-            passRight = true;
++        if (passLeft){
++            passArrow.setImageResource(R.drawable.arrow_left_glow);
+         }
+         else if (passRight){
++            passArrow.setImageResource(R.drawable.arrow_right_glow);
++        }
++        else if (passAcross){
++            passArrow.setImageResource(R.drawable.arrow_across_glow);
++        }
++        else{
++            passArrow.setVisibility(View.GONE);
++        }
+ 
++    }
+ 
+-            passRight = false;
+-            passAcross = true;
++    // happens when 3 cards aren't selected therefore must take away arrow glow
++    private void passPhaseDeActivate(){
+ 
++        passPhaseGlowActivated = true;
+ 
++        if (passLeft){
++            passArrow.setImageResource(R.drawable.arrow_left_noglow);
+         }
++        else if (passRight){
++            passArrow.setImageResource(R.drawable.arrow_right_noglow);
++        }
+         else if (passAcross){
+-
+-
+-            passAcross = false;
+-            passNone = true;
++            passArrow.setImageResource(R.drawable.arrow_across_noglow);
+         }
+         else{
++            passArrow.setVisibility(View.GONE);
++        }
+ 
+-            passNone = false;
+-            passLeft = true;
+-        }
++    }
+ 
++    private void mustPassThreeCards(){
++        mustSelectThreeCardsImage.setVisibility(View.VISIBLE);
+ 
++        mustSelectThreeCardsImage.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                mustSelectThreeCardsImage.setVisibility(View.GONE);
++            }
++        });
+ 
++        new Handler().postDelayed(new Runnable() {
++            @Override
++            public void run() {
++                mustSelectThreeCardsImage.setVisibility(View.GONE);
++            }
++        }, 3000);
+     }
+ 
+ 
+Index: app/src/main/java/com/example/potato/cards/PlayerAI.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- app/src/main/java/com/example/potato/cards/PlayerAI.java	(revision )
++++ app/src/main/java/com/example/potato/cards/PlayerAI.java	(revision )
+@@ -1,16 +1,51 @@
+ package com.example.potato.cards;
+ 
++import java.util.ArrayList;
++
+ /**
+  * Created by Potato on 6/7/2015.
+  */
+ public class PlayerAI extends Player{
+ 
++
++
++    PlayerAI(int playerNum){
++        this.playerNumber = playerNum;
++
++        // assigns player to left, etc.
++        switch (playerNum){
++            case 2:
++                toLeft = 3;
++                toRight = 1;
++                toAcross = 4;
++                break;
++            case 3:
++                toLeft = 4;
++                toRight = 2;
++                toAcross = 1;
++                break;
++            case 4:
++                toLeft = 1;
++                toRight = 3;
++                toAcross = 2;
++                break;
++        }
++    }
++
+     @Override
+     boolean isHuman() {
+         return false;
+     }
+ 
+-    int getPlayerNumber(){
+-        return 1;
++
++
++    // TODO: choose best AI selector for which cards would be best to pass
++    // for now, just pass 3 random cards
++    @Override
++    ArrayList<Card> getCardsToPass() {
++        ArrayList<Card> temp = new ArrayList<>();
++        for (int i = 0; i < 3; i++)
++            temp.add(getRemoveRandomCardFromHand());
++        return temp;
+     }
+ }
+Index: app/src/main/java/com/example/potato/cards/PlayerHuman.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- app/src/main/java/com/example/potato/cards/PlayerHuman.java	(revision )
++++ app/src/main/java/com/example/potato/cards/PlayerHuman.java	(revision )
+@@ -1,13 +1,33 @@
+ package com.example.potato.cards;
+ 
++import java.util.ArrayList;
++
+ /**
+  * Created by Potato on 6/6/2015.
+  */
+ public class PlayerHuman extends Player{
+ 
+ 
++    private ArrayList<Card> cardsToPass;
++
++    PlayerHuman(ArrayList<Card> cardsToPass){
++        this.cardsToPass = cardsToPass;
++        this.playerNumber = 1;
++
++        toLeft = 2;
++        toRight = 4;
++        toAcross = 3;
++    }
++
++
++
+     @Override
+     boolean isHuman() {
+         return true;
++    }
++
++    @Override
++    ArrayList<Card> getCardsToPass() {
++        return this.cardsToPass;
+     }
+ }
+Index: app/build/generated/source/r/debug/com/example/potato/cards/R.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- app/build/generated/source/r/debug/com/example/potato/cards/R.java	(revision )
++++ app/build/generated/source/r/debug/com/example/potato/cards/R.java	(revision )
+@@ -1528,88 +1528,96 @@
+         public static final int abc_textfield_search_activated_mtrl_alpha=0x7f020038;
+         public static final int abc_textfield_search_default_mtrl_alpha=0x7f020039;
+         public static final int abc_textfield_search_material=0x7f02003a;
+-        public static final int arrow_right=0x7f02003b;
+-        public static final int background_blackjack=0x7f02003c;
+-        public static final int blackjack=0x7f02003d;
+-        public static final int button_background1=0x7f02003e;
+-        public static final int button_background2=0x7f02003f;
+-        public static final int canadian_flag=0x7f020040;
+-        public static final int clear=0x7f020041;
+-        public static final int clubs_ace_suite1=0x7f020042;
+-        public static final int clubs_eight_suite1=0x7f020043;
+-        public static final int clubs_five_suite1=0x7f020044;
+-        public static final int clubs_four_suite1=0x7f020045;
+-        public static final int clubs_jack_suite1=0x7f020046;
+-        public static final int clubs_king_suite1=0x7f020047;
+-        public static final int clubs_nine_suite1=0x7f020048;
+-        public static final int clubs_queen_suite1=0x7f020049;
+-        public static final int clubs_seven_suite1=0x7f02004a;
+-        public static final int clubs_six_suite1=0x7f02004b;
+-        public static final int clubs_ten_suite1=0x7f02004c;
+-        public static final int clubs_three_suite1=0x7f02004d;
+-        public static final int clubs_two_suite1=0x7f02004e;
+-        public static final int diamonds_ace_suite1=0x7f02004f;
+-        public static final int diamonds_eight_suite1=0x7f020050;
+-        public static final int diamonds_five_suite1=0x7f020051;
+-        public static final int diamonds_four_suite1=0x7f020052;
+-        public static final int diamonds_jack_suite1=0x7f020053;
+-        public static final int diamonds_king_suite1=0x7f020054;
+-        public static final int diamonds_nine_suite1=0x7f020055;
+-        public static final int diamonds_queen_suite1=0x7f020056;
+-        public static final int diamonds_seven_suite1=0x7f020057;
+-        public static final int diamonds_six_suite1=0x7f020058;
+-        public static final int diamonds_ten_suite1=0x7f020059;
+-        public static final int diamonds_three_suite1=0x7f02005a;
+-        public static final int diamonds_two_suite1=0x7f02005b;
+-        public static final int fifty_chip=0x7f02005c;
+-        public static final int five_chip=0x7f02005d;
+-        public static final int fivehunna_chip=0x7f02005e;
+-        public static final int hearts_ace_suite1=0x7f02005f;
+-        public static final int hearts_eight_suite1=0x7f020060;
+-        public static final int hearts_five_suite1=0x7f020061;
+-        public static final int hearts_four_suite1=0x7f020062;
+-        public static final int hearts_jack_suite1=0x7f020063;
+-        public static final int hearts_king_suite1=0x7f020064;
+-        public static final int hearts_nine_suite1=0x7f020065;
+-        public static final int hearts_queen_suite1=0x7f020066;
+-        public static final int hearts_seven_suite1=0x7f020067;
+-        public static final int hearts_six_suite1=0x7f020068;
+-        public static final int hearts_ten_suite1=0x7f020069;
+-        public static final int hearts_three_suite1=0x7f02006a;
+-        public static final int hearts_two_suite1=0x7f02006b;
+-        public static final int heartslogo=0x7f02006c;
+-        public static final int hunna_chip=0x7f02006d;
+-        public static final int money_counter=0x7f02006e;
+-        public static final int money_counter_dealphase=0x7f02006f;
+-        public static final int must_wager_money=0x7f020070;
+-        public static final int notification_template_icon_bg=0x7f020089;
+-        public static final int red_card_back=0x7f020071;
+-        public static final int settings=0x7f020072;
+-        public static final int sloth_diane=0x7f020073;
+-        public static final int sloth_jamie=0x7f020074;
+-        public static final int sloth_mike=0x7f020075;
+-        public static final int spades_ace_suite1=0x7f020076;
+-        public static final int spades_eight_suite1=0x7f020077;
+-        public static final int spades_five_suite1=0x7f020078;
+-        public static final int spades_four_suite1=0x7f020079;
+-        public static final int spades_jack_suite1=0x7f02007a;
+-        public static final int spades_king_suite1=0x7f02007b;
+-        public static final int spades_nine_suite1=0x7f02007c;
+-        public static final int spades_queen_suite1=0x7f02007d;
+-        public static final int spades_seven_suite1=0x7f02007e;
+-        public static final int spades_six_suite1=0x7f02007f;
+-        public static final int spades_ten_suite1=0x7f020080;
+-        public static final int spades_three_suite1=0x7f020081;
+-        public static final int spades_two_suite1=0x7f020082;
+-        public static final int stack_chip=0x7f020083;
+-        public static final int ten_chip=0x7f020084;
+-        public static final int twentyfive_chip=0x7f020085;
+-        public static final int you_lose=0x7f020086;
+-        public static final int you_tie=0x7f020087;
+-        public static final int you_win=0x7f020088;
++        public static final int arrow_across_glow=0x7f02003b;
++        public static final int arrow_across_noglow=0x7f02003c;
++        public static final int arrow_left_glow=0x7f02003d;
++        public static final int arrow_left_noglow=0x7f02003e;
++        public static final int arrow_right=0x7f02003f;
++        public static final int arrow_right_glow=0x7f020040;
++        public static final int arrow_right_noglow=0x7f020041;
++        public static final int background_blackjack=0x7f020042;
++        public static final int blackjack=0x7f020043;
++        public static final int button_background1=0x7f020044;
++        public static final int button_background2=0x7f020045;
++        public static final int canadian_flag=0x7f020046;
++        public static final int cannot_pass_this_turn=0x7f020047;
++        public static final int clear=0x7f020048;
++        public static final int clubs_ace_suite1=0x7f020049;
++        public static final int clubs_eight_suite1=0x7f02004a;
++        public static final int clubs_five_suite1=0x7f02004b;
++        public static final int clubs_four_suite1=0x7f02004c;
++        public static final int clubs_jack_suite1=0x7f02004d;
++        public static final int clubs_king_suite1=0x7f02004e;
++        public static final int clubs_nine_suite1=0x7f02004f;
++        public static final int clubs_queen_suite1=0x7f020050;
++        public static final int clubs_seven_suite1=0x7f020051;
++        public static final int clubs_six_suite1=0x7f020052;
++        public static final int clubs_ten_suite1=0x7f020053;
++        public static final int clubs_three_suite1=0x7f020054;
++        public static final int clubs_two_suite1=0x7f020055;
++        public static final int diamonds_ace_suite1=0x7f020056;
++        public static final int diamonds_eight_suite1=0x7f020057;
++        public static final int diamonds_five_suite1=0x7f020058;
++        public static final int diamonds_four_suite1=0x7f020059;
++        public static final int diamonds_jack_suite1=0x7f02005a;
++        public static final int diamonds_king_suite1=0x7f02005b;
++        public static final int diamonds_nine_suite1=0x7f02005c;
++        public static final int diamonds_queen_suite1=0x7f02005d;
++        public static final int diamonds_seven_suite1=0x7f02005e;
++        public static final int diamonds_six_suite1=0x7f02005f;
++        public static final int diamonds_ten_suite1=0x7f020060;
++        public static final int diamonds_three_suite1=0x7f020061;
++        public static final int diamonds_two_suite1=0x7f020062;
++        public static final int fifty_chip=0x7f020063;
++        public static final int five_chip=0x7f020064;
++        public static final int fivehunna_chip=0x7f020065;
++        public static final int hearts_ace_suite1=0x7f020066;
++        public static final int hearts_eight_suite1=0x7f020067;
++        public static final int hearts_five_suite1=0x7f020068;
++        public static final int hearts_four_suite1=0x7f020069;
++        public static final int hearts_jack_suite1=0x7f02006a;
++        public static final int hearts_king_suite1=0x7f02006b;
++        public static final int hearts_nine_suite1=0x7f02006c;
++        public static final int hearts_queen_suite1=0x7f02006d;
++        public static final int hearts_seven_suite1=0x7f02006e;
++        public static final int hearts_six_suite1=0x7f02006f;
++        public static final int hearts_ten_suite1=0x7f020070;
++        public static final int hearts_three_suite1=0x7f020071;
++        public static final int hearts_two_suite1=0x7f020072;
++        public static final int heartslogo=0x7f020073;
++        public static final int hunna_chip=0x7f020074;
++        public static final int money_counter=0x7f020075;
++        public static final int money_counter_dealphase=0x7f020076;
++        public static final int must_choose_3_cards_pass=0x7f020077;
++        public static final int must_wager_money=0x7f020078;
++        public static final int notification_template_icon_bg=0x7f020091;
++        public static final int red_card_back=0x7f020079;
++        public static final int settings=0x7f02007a;
++        public static final int sloth_diane=0x7f02007b;
++        public static final int sloth_jamie=0x7f02007c;
++        public static final int sloth_mike=0x7f02007d;
++        public static final int spades_ace_suite1=0x7f02007e;
++        public static final int spades_eight_suite1=0x7f02007f;
++        public static final int spades_five_suite1=0x7f020080;
++        public static final int spades_four_suite1=0x7f020081;
++        public static final int spades_jack_suite1=0x7f020082;
++        public static final int spades_king_suite1=0x7f020083;
++        public static final int spades_nine_suite1=0x7f020084;
++        public static final int spades_queen_suite1=0x7f020085;
++        public static final int spades_seven_suite1=0x7f020086;
++        public static final int spades_six_suite1=0x7f020087;
++        public static final int spades_ten_suite1=0x7f020088;
++        public static final int spades_three_suite1=0x7f020089;
++        public static final int spades_two_suite1=0x7f02008a;
++        public static final int stack_chip=0x7f02008b;
++        public static final int ten_chip=0x7f02008c;
++        public static final int twentyfive_chip=0x7f02008d;
++        public static final int you_lose=0x7f02008e;
++        public static final int you_tie=0x7f02008f;
++        public static final int you_win=0x7f020090;
+     }
+     public static final class id {
+-        public static final int action0=0x7f0b0082;
++        public static final int action0=0x7f0b0085;
+         public static final int action_bar=0x7f0b0040;
+         public static final int action_bar_activity_content=0x7f0b0000;
+         public static final int action_bar_container=0x7f0b003f;
+@@ -1618,16 +1626,17 @@
+         public static final int action_bar_subtitle=0x7f0b0024;
+         public static final int action_bar_title=0x7f0b0023;
+         public static final int action_context_bar=0x7f0b0041;
+-        public static final int action_divider=0x7f0b0086;
++        public static final int action_divider=0x7f0b0089;
+         public static final int action_menu_divider=0x7f0b0002;
+         public static final int action_menu_presenter=0x7f0b0003;
+         public static final int action_mode_bar=0x7f0b003d;
+         public static final int action_mode_bar_stub=0x7f0b003c;
+         public static final int action_mode_close_button=0x7f0b0025;
+-        public static final int action_settings=0x7f0b0097;
++        public static final int action_settings=0x7f0b009a;
+         public static final int activity_chooser_view_content=0x7f0b0026;
+         public static final int alertTitle=0x7f0b0030;
+         public static final int always=0x7f0b0016;
++        public static final int arrow_pass=0x7f0b007d;
+         public static final int beginning=0x7f0b0013;
+         public static final int bjchipsgrid=0x7f0b0067;
+         public static final int bjgamelayout=0x7f0b0056;
+@@ -1636,12 +1645,12 @@
+         public static final int blackjack_settings_button=0x7f0b0068;
+         public static final int blackjackgame_parent_layout=0x7f0b0055;
+         public static final int buttonPanel=0x7f0b0036;
+-        public static final int cancel_action=0x7f0b0083;
++        public static final int cancel_action=0x7f0b0086;
+         public static final int checkbox=0x7f0b0038;
+-        public static final int chronometer=0x7f0b0089;
++        public static final int chronometer=0x7f0b008c;
+         public static final int collapseActionView=0x7f0b0017;
+         public static final int contentPanel=0x7f0b0031;
+-        public static final int current_hand_space=0x7f0b007d;
++        public static final int current_hand_space=0x7f0b007f;
+         public static final int current_score_text=0x7f0b0057;
+         public static final int custom=0x7f0b0035;
+         public static final int customPanel=0x7f0b0034;
+@@ -1655,7 +1664,7 @@
+         public static final int dropdown=0x7f0b001c;
+         public static final int edit_query=0x7f0b0042;
+         public static final int end=0x7f0b0014;
+-        public static final int end_padder=0x7f0b008e;
++        public static final int end_padder=0x7f0b0091;
+         public static final int expand_activities_button=0x7f0b0027;
+         public static final int expanded_menu=0x7f0b0037;
+         public static final int fifty_chip=0x7f0b0071;
+@@ -1665,7 +1674,7 @@
+         public static final int fivehunna_chip=0x7f0b006d;
+         public static final int fivehunna_chip_counter=0x7f0b006c;
+         public static final int hearts_menu=0x7f0b0053;
+-        public static final int hearts_settings_button=0x7f0b007e;
++        public static final int hearts_settings_button=0x7f0b0081;
+         public static final int heartsgame_layout=0x7f0b0079;
+         public static final int hit_button=0x7f0b005d;
+         public static final int home=0x7f0b0004;
+@@ -1675,25 +1684,26 @@
+         public static final int icon=0x7f0b002b;
+         public static final int ifRoom=0x7f0b0018;
+         public static final int image=0x7f0b0028;
+-        public static final int imageView=0x7f0b0094;
+-        public static final int imageView2=0x7f0b0095;
+-        public static final int imageViewX=0x7f0b0096;
+-        public static final int info=0x7f0b008d;
++        public static final int imageView=0x7f0b0097;
++        public static final int imageView2=0x7f0b0098;
++        public static final int imageViewX=0x7f0b0099;
++        public static final int info=0x7f0b0090;
+         public static final int instructions_button=0x7f0b0050;
+-        public static final int lay=0x7f0b0090;
+-        public static final int line1=0x7f0b0087;
+-        public static final int line3=0x7f0b008b;
++        public static final int lay=0x7f0b0093;
++        public static final int line1=0x7f0b008a;
++        public static final int line3=0x7f0b008e;
+         public static final int listMode=0x7f0b0009;
+         public static final int list_item=0x7f0b002a;
+-        public static final int media_actions=0x7f0b0085;
++        public static final int media_actions=0x7f0b0088;
+         public static final int middle=0x7f0b0015;
+         public static final int money_counter_dealphase_imageview=0x7f0b0060;
+         public static final int money_counter_imageview=0x7f0b005c;
+         public static final int money_counter_textview=0x7f0b0061;
+         public static final int money_on_table_textview=0x7f0b0063;
+         public static final int multiply=0x7f0b001e;
+-        public static final int musicTextView=0x7f0b0092;
+-        public static final int musicVolumeSeekBar=0x7f0b0091;
++        public static final int musicTextView=0x7f0b0095;
++        public static final int musicVolumeSeekBar=0x7f0b0094;
++        public static final int must_select_three_cards=0x7f0b007e;
+         public static final int must_wager_money=0x7f0b0062;
+         public static final int never=0x7f0b0019;
+         public static final int none=0x7f0b000e;
+@@ -1719,7 +1729,7 @@
+         public static final int search_voice_btn=0x7f0b004d;
+         public static final int select_dialog_listview=0x7f0b004e;
+         public static final int settings_button=0x7f0b004f;
+-        public static final int settings_menu=0x7f0b008f;
++        public static final int settings_menu=0x7f0b0092;
+         public static final int shortcut=0x7f0b0039;
+         public static final int showCustom=0x7f0b000f;
+         public static final int showHome=0x7f0b0010;
+@@ -1732,21 +1742,22 @@
+         public static final int src_in=0x7f0b0021;
+         public static final int src_over=0x7f0b0022;
+         public static final int stand_button=0x7f0b005e;
+-        public static final int status_bar_latest_event_content=0x7f0b0084;
++        public static final int status_bar_latest_event_content=0x7f0b0087;
+         public static final int submit_area=0x7f0b004b;
+-        public static final int switch1=0x7f0b0093;
++        public static final int switch1=0x7f0b0096;
+         public static final int tabMode=0x7f0b000b;
+         public static final int ten_chip=0x7f0b0075;
+         public static final int ten_chip_counter=0x7f0b0074;
+-        public static final int text=0x7f0b008c;
+-        public static final int text2=0x7f0b008a;
++        public static final int testview123=0x7f0b0080;
++        public static final int text=0x7f0b008f;
++        public static final int text2=0x7f0b008d;
+         public static final int textSpacerNoButtons=0x7f0b0033;
+-        public static final int textView=0x7f0b007f;
+-        public static final int textView5=0x7f0b0080;
+-        public static final int textView6=0x7f0b0081;
++        public static final int textView=0x7f0b0082;
++        public static final int textView5=0x7f0b0083;
++        public static final int textView6=0x7f0b0084;
+         public static final int thousand_chip=0x7f0b006b;
+         public static final int thousand_chip_counter=0x7f0b006a;
+-        public static final int time=0x7f0b0088;
++        public static final int time=0x7f0b008b;
+         public static final int title=0x7f0b002c;
+         public static final int title_template=0x7f0b002f;
+         public static final int topPanel=0x7f0b002e;
+Index: app/build/generated/source/r/debug/android/support/v7/appcompat/R.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- app/build/generated/source/r/debug/android/support/v7/appcompat/R.java	(revision )
++++ app/build/generated/source/r/debug/android/support/v7/appcompat/R.java	(revision )
+@@ -426,10 +426,10 @@
+ 		public static final int abc_textfield_search_activated_mtrl_alpha = 0x7f020038;
+ 		public static final int abc_textfield_search_default_mtrl_alpha = 0x7f020039;
+ 		public static final int abc_textfield_search_material = 0x7f02003a;
+-		public static final int notification_template_icon_bg = 0x7f020089;
++		public static final int notification_template_icon_bg = 0x7f020091;
+ 	}
+ 	public static final class id {
+-		public static final int action0 = 0x7f0b0082;
++		public static final int action0 = 0x7f0b0085;
+ 		public static final int action_bar = 0x7f0b0040;
+ 		public static final int action_bar_activity_content = 0x7f0b0000;
+ 		public static final int action_bar_container = 0x7f0b003f;
+@@ -438,7 +438,7 @@
+ 		public static final int action_bar_subtitle = 0x7f0b0024;
+ 		public static final int action_bar_title = 0x7f0b0023;
+ 		public static final int action_context_bar = 0x7f0b0041;
+-		public static final int action_divider = 0x7f0b0086;
++		public static final int action_divider = 0x7f0b0089;
+ 		public static final int action_menu_divider = 0x7f0b0002;
+ 		public static final int action_menu_presenter = 0x7f0b0003;
+ 		public static final int action_mode_bar = 0x7f0b003d;
+@@ -449,9 +449,9 @@
+ 		public static final int always = 0x7f0b0016;
+ 		public static final int beginning = 0x7f0b0013;
+ 		public static final int buttonPanel = 0x7f0b0036;
+-		public static final int cancel_action = 0x7f0b0083;
++		public static final int cancel_action = 0x7f0b0086;
+ 		public static final int checkbox = 0x7f0b0038;
+-		public static final int chronometer = 0x7f0b0089;
++		public static final int chronometer = 0x7f0b008c;
+ 		public static final int collapseActionView = 0x7f0b0017;
+ 		public static final int contentPanel = 0x7f0b0031;
+ 		public static final int custom = 0x7f0b0035;
+@@ -463,7 +463,7 @@
+ 		public static final int dropdown = 0x7f0b001c;
+ 		public static final int edit_query = 0x7f0b0042;
+ 		public static final int end = 0x7f0b0014;
+-		public static final int end_padder = 0x7f0b008e;
++		public static final int end_padder = 0x7f0b0091;
+ 		public static final int expand_activities_button = 0x7f0b0027;
+ 		public static final int expanded_menu = 0x7f0b0037;
+ 		public static final int home = 0x7f0b0004;
+@@ -471,12 +471,12 @@
+ 		public static final int icon = 0x7f0b002b;
+ 		public static final int ifRoom = 0x7f0b0018;
+ 		public static final int image = 0x7f0b0028;
+-		public static final int info = 0x7f0b008d;
+-		public static final int line1 = 0x7f0b0087;
+-		public static final int line3 = 0x7f0b008b;
++		public static final int info = 0x7f0b0090;
++		public static final int line1 = 0x7f0b008a;
++		public static final int line3 = 0x7f0b008e;
+ 		public static final int listMode = 0x7f0b0009;
+ 		public static final int list_item = 0x7f0b002a;
+-		public static final int media_actions = 0x7f0b0085;
++		public static final int media_actions = 0x7f0b0088;
+ 		public static final int middle = 0x7f0b0015;
+ 		public static final int multiply = 0x7f0b001e;
+ 		public static final int never = 0x7f0b0019;
+@@ -507,13 +507,13 @@
+ 		public static final int src_atop = 0x7f0b0020;
+ 		public static final int src_in = 0x7f0b0021;
+ 		public static final int src_over = 0x7f0b0022;
+-		public static final int status_bar_latest_event_content = 0x7f0b0084;
++		public static final int status_bar_latest_event_content = 0x7f0b0087;
+ 		public static final int submit_area = 0x7f0b004b;
+ 		public static final int tabMode = 0x7f0b000b;
+-		public static final int text = 0x7f0b008c;
+-		public static final int text2 = 0x7f0b008a;
++		public static final int text = 0x7f0b008f;
++		public static final int text2 = 0x7f0b008d;
+ 		public static final int textSpacerNoButtons = 0x7f0b0033;
+-		public static final int time = 0x7f0b0088;
++		public static final int time = 0x7f0b008b;
+ 		public static final int title = 0x7f0b002c;
+ 		public static final int title_template = 0x7f0b002f;
+ 		public static final int topPanel = 0x7f0b002e;

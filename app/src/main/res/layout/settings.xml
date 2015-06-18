@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/settings_menu"
+    android:background="@drawable/wood_background">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_margin="20dp"
+        android:background="@drawable/orangeish_menu_button"
+        android:layout_height="100dp"
+        android:id="@+id/relativeLayout">
+
+
+        <SeekBar
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="30dp"
+            android:layout_alignParentStart="true"
+
+            android:layout_marginLeft="130dp"
+            android:layout_marginStart="130dp"
+            android:id="@+id/musicVolumeSeekBar"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/music"
+            android:id="@+id/musicTextView"
+            android:layout_marginLeft="47dp"
+            android:layout_marginStart="47dp"
+            android:layout_alignTop="@+id/musicVolumeSeekBar"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textSize="30dp"
+            android:textColor="#FFFFCC"/>
+
+    </RelativeLayout>
+
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="180dp"
+        android:background="@drawable/hearts_king_suite1"
+        android:id="@+id/change_suite"
+        android:visibility="gone"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tri_button_right"
+        android:visibility="gone"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/triangle_button_right"
+        android:layout_alignBottom="@+id/change_suite"
+        android:layout_marginBottom="65dp"
+        android:layout_marginRight="10dp"
+        android:layout_centerVertical="true">
+
+    </Button>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:id="@+id/tri_button_left"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/triangle_button_left"
+        android:layout_marginBottom="65dp"
+        android:layout_alignBottom="@id/change_suite"
+        />
+
+
+</RelativeLayout>

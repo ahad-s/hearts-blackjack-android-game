@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.potato.cards" >
+
+    <uses-permission android:name="ANDROID.PERMISSION.INTERNET">
+
+    </uses-permission>
+
+
+
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+        android:largeHeap="true">
+
+        <activity
+            android:name="com.example.potato.cards.MainActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/app_name" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".HControl"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden">
+        </activity>
+
+        <activity android:name=".BJControl"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
+
+        </activity>
+
+        <activity android:name=".SettingsMenu"
+            android:theme="@style/AppTheme.popUpInstructions">
+
+
+        </activity>
+
+        <activity android:name=".ScoreBoard"
+            android:theme="@style/AppTheme.popUpInstructions">
+        </activity>
+
+
+    </application>
+
+</manifest>

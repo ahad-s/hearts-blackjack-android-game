@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<resources>
+
+    <string-array name="suite_1_cards">
+
+        <item>clubs_ace_suite1</item>
+        <item>clubs_eight_suite1</item>
+        <item>clubs_five_suite1</item>
+        <item>clubs_four_suite1</item>
+        <item>clubs_jack_suite1</item>
+        <item>clubs_king_suite1</item>
+        <item>clubs_nine_suite1</item>
+        <item>clubs_queen_suite1</item>
+        <item>clubs_seven_suite1</item>
+        <item>clubs_six_suite1</item>
+        <item>clubs_ten_suite1</item>
+        <item>clubs_three_suite1</item>
+        <item>clubs_two_suite1</item>
+        <item>diamonds_ace_suite1</item>
+        <item>diamonds_eight_suite1</item>
+        <item>diamonds_five_suite1</item>
+        <item>diamonds_four_suite1</item>
+        <item>diamonds_jack_suite1</item>
+        <item>diamonds_king_suite1</item>
+        <item>diamonds_nine_suite1</item>
+        <item>diamonds_queen_suite1</item>
+        <item>diamonds_seven_suite1</item>
+        <item>diamonds_six_suite1</item>
+        <item>diamonds_ten_suite1</item>
+        <item>diamonds_three_suite1</item>
+        <item>diamonds_two_suite1</item>
+        <item>hearts_ace_suite1</item>
+        <item>hearts_eight_suite1</item>
+        <item>hearts_five_suite1</item>
+        <item>hearts_four_suite1</item>
+        <item>hearts_jack_suite1</item>
+        <item>hearts_king_suite1</item>
+        <item>hearts_nine_suite1</item>
+        <item>hearts_queen_suite1</item>
+        <item>hearts_seven_suite1</item>
+        <item>hearts_six_suite1</item>
+        <item>hearts_ten_suite1</item>
+        <item>hearts_three_suite1</item>
+        <item>hearts_two_suite1</item>
+        <item>spades_ace_suite1</item>
+        <item>spades_eight_suite1</item>
+        <item>spades_five_suite1</item>
+        <item>spades_four_suite1</item>
+        <item>spades_jack_suite1</item>
+        <item>spades_king_suite1</item>
+        <item>spades_nine_suite1</item>
+        <item>spades_queen_suite1</item>
+        <item>spades_seven_suite1</item>
+        <item>spades_six_suite1</item>
+        <item>spades_ten_suite1</item>
+        <item>spades_three_suite1</item>
+        <item>spades_two_suite1</item>
+
+    </string-array>
+
+    <string-array name="suite_2_cards">
+
+        <item>clubs_ace_suite2</item>
+        <item>clubs_eight_suite2</item>
+        <item>clubs_five_suite2</item>
+        <item>clubs_four_suite2</item>
+        <item>clubs_jack_suite2</item>
+        <item>clubs_king_suite2</item>
+        <item>clubs_nine_suite2</item>
+        <item>clubs_queen_suite2</item>
+        <item>clubs_seven_suite2</item>
+        <item>clubs_six_suite2</item>
+        <item>clubs_ten_suite2</item>
+        <item>clubs_three_suite2</item>
+        <item>clubs_two_suite2</item>
+        <item>diamonds_ace_suite2</item>
+        <item>diamonds_eight_suite2</item>
+        <item>diamonds_five_suite2</item>
+        <item>diamonds_four_suite2</item>
+        <item>diamonds_jack_suite2</item>
+        <item>diamonds_king_suite2</item>
+        <item>diamonds_nine_suite2</item>
+        <item>diamonds_queen_suite2</item>
+        <item>diamonds_seven_suite2</item>
+        <item>diamonds_six_suite2</item>
+        <item>diamonds_ten_suite2</item>
+        <item>diamonds_three_suite2</item>
+        <item>diamonds_two_suite2</item>
+        <item>hearts_ace_suite2</item>
+        <item>hearts_eight_suite2</item>
+        <item>hearts_five_suite2</item>
+        <item>hearts_four_suite2</item>
+        <item>hearts_jack_suite2</item>
+        <item>hearts_king_suite2</item>
+        <item>hearts_nine_suite2</item>
+        <item>hearts_queen_suite2</item>
+        <item>hearts_seven_suite2</item>
+        <item>hearts_six_suite2</item>
+        <item>hearts_ten_suite2</item>
+        <item>hearts_three_suite2</item>
+        <item>hearts_two_suite2</item>
+        <item>spades_ace_suite2</item>
+        <item>spades_eight_suite2</item>
+        <item>spades_five_suite2</item>
+        <item>spades_four_suite2</item>
+        <item>spades_jack_suite2</item>
+        <item>spades_king_suite2</item>
+        <item>spades_nine_suite2</item>
+        <item>spades_queen_suite2</item>
+        <item>spades_seven_suite2</item>
+        <item>spades_six_suite2</item>
+        <item>spades_ten_suite2</item>
+        <item>spades_three_suite2</item>
+        <item>spades_two_suite2</item>
+
+    </string-array>
+
+    <string name="suite_3_cards">
+
+        <item>clubs_ace_suite3</item>
+        <item>clubs_eight_suite3</item>
+        <item>clubs_five_suite3</item>
+        <item>clubs_four_suite3</item>
+        <item>clubs_jack_suite3</item>
+        <item>clubs_king_suite3</item>
+        <item>clubs_nine_suite3</item>
+        <item>clubs_queen_suite3</item>
+        <item>clubs_seven_suite3</item>
+        <item>clubs_six_suite3</item>
+        <item>clubs_ten_suite3</item>
+        <item>clubs_three_suite3</item>
+        <item>clubs_two_suite3</item>
+        <item>diamonds_ace_suite3</item>
+        <item>diamonds_eight_suite3</item>
+        <item>diamonds_five_suite3</item>
+        <item>diamonds_four_suite3</item>
+        <item>diamonds_jack_suite3</item>
+        <item>diamonds_king_suite3</item>
+        <item>diamonds_nine_suite3</item>
+        <item>diamonds_queen_suite3</item>
+        <item>diamonds_seven_suite3</item>
+        <item>diamonds_six_suite3</item>
+        <item>diamonds_ten_suite3</item>
+        <item>diamonds_three_suite3</item>
+        <item>diamonds_two_suite3</item>
+        <item>hearts_ace_suite3</item>
+        <item>hearts_eight_suite3</item>
+        <item>hearts_five_suite3</item>
+        <item>hearts_four_suite3</item>
+        <item>hearts_jack_suite3</item>
+        <item>hearts_king_suite3</item>
+        <item>hearts_nine_suite3</item>
+        <item>hearts_queen_suite3</item>
+        <item>hearts_seven_suite3</item>
+        <item>hearts_six_suite3</item>
+        <item>hearts_ten_suite3</item>
+        <item>hearts_three_suite3</item>
+        <item>hearts_two_suite3</item>
+        <item>spades_ace_suite3</item>
+        <item>spades_eight_suite3</item>
+        <item>spades_five_suite3</item>
+        <item>spades_four_suite3</item>
+        <item>spades_jack_suite3</item>
+        <item>spades_king_suite3</item>
+        <item>spades_nine_suite3</item>
+        <item>spades_queen_suite3</item>
+        <item>spades_seven_suite3</item>
+        <item>spades_six_suite3</item>
+        <item>spades_ten_suite3</item>
+        <item>spades_three_suite3</item>
+        <item>spades_two_suite3</item>
+
+    </string>
+
+</resources>

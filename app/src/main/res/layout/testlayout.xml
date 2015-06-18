@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="end"
+    android:id="@+id/blackjackgame_parent_layout"
+    android:background="#FFFFFF">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/bjgamelayout">
+
+        <ImageView
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="6dp"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:id="@+id/money_counter_imageview"
+            android:src="@drawable/money_counter"/>
+
+        <ImageView
+            android:layout_width="95dp"
+            android:layout_height="105dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/money_counter_dealphase"
+            android:id="@+id/money_counter_dealphase_imageview"
+            android:layout_marginBottom="-25dp"
+            android:layout_marginRight="42dp"
+            android:layout_marginEnd="42dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true">
+
+        </ImageView>
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HIT"
+            android:id="@+id/hit_button"
+            android:layout_alignParentBottom="true"
+            android:layout_alignLeft="@+id/money_counter_imageview"
+            android:layout_alignStart="@+id/money_counter_imageview" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="STAND"
+            android:id="@+id/stand_button"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true">
+
+        </Button>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DEAL"
+            android:textSize="30dp"
+            android:visibility="gone"
+            android:id="@+id/deal_button"
+            android:layout_below="@+id/money_counter_dealphase_imageview"
+            android:layout_alignLeft="@+id/money_counter_dealphase_imageview"
+            android:layout_alignStart="@+id/money_counter_dealphase_imageview"
+            android:layout_marginTop="65dp" />
+
+        <TextView
+            android:gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:maxWidth="75dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:ellipsize="marquee"
+            android:textColor="#000000"
+            android:text="$0"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/money_counter_textview"
+            android:layout_marginTop="5dp"
+            android:layout_alignTop="@id/money_counter_imageview"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_alignBottom="@id/money_counter_imageview"
+            android:layout_alignStart="@id/money_counter_imageview"
+            android:layout_alignLeft="@+id/money_counter_imageview"
+            android:layout_marginBottom="61dp">
+
+        </TextView>
+
+        <TextView
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:ellipsize="marquee"
+            android:textColor="#000000"
+            android:maxWidth="75dp"
+            android:text="$0"
+            android:id="@+id/money_on_table_textview"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="7dp"
+            android:layout_marginRight="36dp"
+            android:layout_centerVertical="true"
+            android:layout_alignRight="@+id/money_counter_dealphase_imageview"
+            android:layout_alignEnd="@+id/money_counter_dealphase_imageview"
+            android:layout_marginEnd="36dp" />
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:background="@drawable/must_wager_money"
+            android:id="@+id/must_wager_money"
+            android:layout_below="@+id/deal_button"
+            android:layout_alignRight="@+id/money_on_table_textview"
+            android:layout_alignEnd="@+id/money_on_table_textview"
+            android:layout_marginTop="34dp"
+            android:visibility="gone"
+            />
+
+        <!--  purpose????????? -->
+        <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_marginRight="35dp"-->
+        <!--android:layout_marginLeft="35dp"-->
+        <!--android:layout_height="130dp"-->
+        <!--android:layout_below="@+id/deal_button"-->
+        <!--android:layout_marginBottom="15dp">-->
+
+        <!--</LinearLayout>-->
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:id="@+id/player_cardspace_layout"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_alignTop="@+id/money_counter_imageview"
+
+            android:layout_marginTop="290dp"
+            android:visibility="visible">
+
+            <ImageView
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:maxWidth="142dp"
+                android:id="@+id/imageView"
+                android:src="@drawable/clubs_ace_suite1">
+
+            </ImageView>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/imageView2"
+                android:src="@drawable/clubs_ace_suite1"/>
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="292.5dp"
+            android:layout_marginBottom="180dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="2"
+                android:text="@string/player"
+                android:textSize="20dp"
+                android:background="@drawable/button_background1"
+                android:textColor="#FFFF00"
+                android:gravity="center_horizontal|center_vertical"
+                android:layout_height="match_parent"
+                android:layout_marginRight="30dp"/>
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="20dp"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/dealer"
+                android:textColor="#FFFF00"
+                android:background="@drawable/button_background2"
+                android:textSize="20dp"
+                android:layout_weight="2"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:id="@+id/dealer_cardspace_layout"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginTop="105dp"
+            android:layout_height="170dp"
+            android:visibility="visible">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageViewX"
+                android:src="@drawable/clubs_ace_suite1"/>
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="91dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end|bottom"
+        android:id="@+id/bjchipsgrid"
+        android:gravity="top|end"
+        android:visibility="gone"
+        android:useDefaultMargins="true"
+
+        android:paddingTop="30dp">
+
+
+        <!-- middle == aa..cc
+         marquee == aabbcc auto sliding
+         start == ..bbcc
+         end == aabb..
+         CHIP FONT: Lucida Handwriting 86.39px for 1-3 digits-->
+
+        <ImageButton
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:contentDescription=""
+            android:id="@+id/blackjack_settings_button"
+            android:background="@drawable/settings"
+            android:layout_marginBottom="15dp"
+            android:layout_gravity="center_horizontal"/>
+
+        <ImageButton
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:id="@+id/blackjack_clear_button"
+            android:background="@drawable/clear"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center_horizontal"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp">
+
+            <TextView
+                android:layout_width="31dp"
+                android:layout_height="match_parent"
+                android:text="@string/zero_chips"
+                android:id="@+id/thousand_chip_counter"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                />
+
+            <ImageButton
+                android:layout_gravity="end"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:id="@+id/thousand_chip"
+                android:background="@drawable/stack_chip"
+                android:scaleType="fitXY">
+
+            </ImageButton>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_height="50dp">
+
+            <TextView
+                android:layout_width="31dp"
+                android:layout_height="match_parent"
+                android:text="@string/zero_chips"
+                android:id="@+id/fivehunna_chip_counter"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                />
+
+            <ImageButton
+                android:layout_gravity="end"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:id="@+id/fivehunna_chip"
+                android:background="@drawable/fivehunna_chip"
+                android:scaleType="fitXY">
+
+            </ImageButton>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_height="50dp">
+
+            <TextView
+                android:layout_width="31dp"
+                android:layout_height="match_parent"
+                android:text="@string/zero_chips"
+                android:id="@+id/hunna_chip_counter"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                />
+
+            <ImageButton
+                android:layout_gravity="end"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:id="@+id/hunna_chip"
+                android:background="@drawable/hunna_chip"
+                android:scaleType="fitXY">
+
+            </ImageButton>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_height="50dp">
+
+            <TextView
+                android:layout_width="31dp"
+                android:layout_height="match_parent"
+                android:text="@string/zero_chips"
+                android:id="@+id/fifty_chip_counter"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                />
+
+            <ImageButton
+                android:layout_gravity="end"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:id="@+id/fifty_chip"
+                android:background="@drawable/fifty_chip"
+                android:scaleType="fitXY">
+
+            </ImageButton>
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_height="50dp">
+
+            <TextView
+                android:layout_width="31dp"
+                android:layout_height="match_parent"
+                android:text="@string/zero_chips"
+                android:id="@+id/twentyfive_chip_counter"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                />
+
+            <ImageButton
+                android:layout_gravity="end"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:id="@+id/twentyfive_chip"
+                android:background="@drawable/twentyfive_chip"
+                android:scaleType="fitXY">
+
+            </ImageButton>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_height="50dp">
+
+            <TextView
+                android:layout_width="31dp"
+                android:layout_height="match_parent"
+                android:text="@string/zero_chips"
+                android:id="@+id/ten_chip_counter"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                />
+
+            <ImageButton
+                android:layout_gravity="end"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:id="@+id/ten_chip"
+                android:background="@drawable/ten_chip"
+                android:scaleType="fitXY">
+
+            </ImageButton>
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_height="50dp">
+
+            <TextView
+                android:layout_width="31dp"
+                android:layout_height="match_parent"
+                android:text="@string/zero_chips"
+                android:id="@+id/five_chip_counter"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                />
+
+            <ImageButton
+                android:layout_gravity="end"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:id="@+id/five_chip"
+                android:background="@drawable/five_chip"
+                android:scaleType="fitXY">
+
+            </ImageButton>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

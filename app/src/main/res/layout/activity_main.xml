@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
+    android:background="@drawable/wood_background">
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="160dp"
+        android:layout_height="40dp"
+        android:text="Settings"
+        android:layout_margin="5dp"
+        android:alpha=".8"
+        android:background="@drawable/orangeish_menu_button"
+        android:id="@+id/settings_button"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="160dp"
+        android:layout_height="40dp"
+        android:text="INSTRUCTIONS"
+        android:layout_margin="5dp"
+        android:alpha=".8"
+        android:background="@drawable/orangeish_menu_button"
+        android:id="@+id/instructions_button"
+        android:layout_above="@+id/settings_button"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="160dp"
+        android:layout_height="40dp"
+        android:layout_margin="5dp"
+        android:text="Play!"
+        android:alpha=".8"
+        android:background="@drawable/orangeish_menu_button"
+        android:id="@+id/play_button"
+        android:layout_above="@+id/instructions_button"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="530dp"
+        android:layout_height="195dp"
+        android:src="@drawable/mario_blackjack"
+        android:scaleType="fitXY"
+        android:layout_margin="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/blackjack_menu"
+        android:contentDescription="Blackjack!"/>
+
+
+    <ImageButton
+        android:layout_width="530dp"
+        android:layout_height="195dp"
+        android:src="@drawable/heartslogo"
+        android:scaleType="fitXY"
+        android:layout_margin="5dp"
+        android:layout_above="@+id/play_button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/hearts_menu"
+        android:contentDescription="Hearts!"
+        />
+
+</RelativeLayout>

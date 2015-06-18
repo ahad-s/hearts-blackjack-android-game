@@ -1,0 +1,17 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="AppTheme.popUpInstructions">
+        <item name="android:windowIsTranslucent">true</item>  <!-- needed for popUp to look nicer !-->
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowEnterAnimation">@anim/abc_popup_enter</item>
+        <item name="android:windowExitAnimation">@anim/abc_popup_exit</item>
+    </style>
+
+
+
+</resources>

@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:background="@drawable/green_cloth"
+
+    android:id="@+id/heartsgame_layout">
+
+
+    <ImageView
+        android:layout_width="90dp"
+        android:layout_height="80dp"
+        android:id="@+id/sloth_mike"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/sloth_mike"/>
+
+    <ImageView
+        android:layout_width="90dp"
+        android:layout_height="80dp"
+        android:id="@+id/sloth_jamie"
+        android:src="@drawable/sloth_jamie"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true" />
+
+    <ImageView
+        android:layout_width="110dp"
+        android:layout_height="100dp"
+        android:id="@+id/sloth_diane"
+        android:src="@drawable/sloth_diane"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/arrow_pass"
+        android:src="@drawable/arrow_left_noglow"
+        />
+
+
+    
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:id="@+id/must_select_three_cards"
+        android:src="@drawable/must_choose_3_cards_pass"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:layout_toLeftOf="@id/arrow_pass"/>
+    
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <!--<ImageView-->
+        <!--android:layout_width="150dp"-->
+        <!--android:layout_height="60dp"-->
+        <!--android:id="@+id/cannot_pass_this_turn"-->
+        <!--android:src="@drawable/cannot_pass_this_turn"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_toLeftOf="@id/arrow_pass"/>-->
+
+
+
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:clipChildren="false"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_height="90dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="6dp"
+            android:id="@+id/current_hand_space">
+
+
+        </RelativeLayout>
+
+
+
+            <!--<ImageView-->
+                <!--android:layout_width="66.3dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:adjustViewBounds="true"-->
+                <!--android:id="@+id/imageView8"-->
+                <!--android:src="@drawable/clubs_ace_suite1"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_alignParentStart="true">-->
+
+            <!--</ImageView>-->
+
+
+
+            <!--</ImageView>-->
+
+            <!--<ImageView-->
+                <!--android:layout_width="66.3dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:adjustViewBounds="true"-->
+                <!--android:layout_marginLeft="-30dp"-->
+                <!--android:layout_toRightOf="@id/imageView8"-->
+                <!--android:id="@+id/imageView11"-->
+                <!--android:src="@drawable/clubs_ace_suite1">-->
+
+            <!--</ImageView>-->
+
+
+            <!--</ImageView>-->
+
+            <!--<ImageView-->
+                <!--android:layout_width="66.3dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:adjustViewBounds="true"-->
+                <!--android:id="@+id/imageView12"-->
+
+
+                <!--android:layout_toRightOf="@+id/imageView11"-->
+                <!--android:layout_marginLeft="-30dp"-->
+                <!--android:src="@drawable/diamonds_ace_suite1">-->
+
+            <!--</ImageView>-->
+
+
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:id="@+id/hearts_settings_button"
+        android:background="@drawable/settings"
+        android:layout_below="@+id/diane_textview"
+        android:layout_alignStart="@+id/jamie_scoreview">
+
+    </ImageView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Diane"
+        android:textColor="#fff7fcff"
+        android:id="@+id/diane_textview"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/sloth_diane">
+
+    </TextView>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Mikey"
+        android:textColor="#ffeeefff"
+        android:id="@+id/mikey_textview"
+        android:layout_alignBaseline="@+id/mikey_scoreview"
+        android:layout_alignBottom="@+id/mikey_scoreview"
+        android:layout_alignStart="@+id/current_hand_space">
+
+    </TextView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Jamie"
+        android:textColor="#fff0efff"
+        android:id="@+id/jamie_textview"
+        android:layout_below="@+id/sloth_diane"
+        android:layout_alignEnd="@+id/current_hand_space" />
+
+    <TextView
+        android:layout_width="32dp"
+        android:layout_height="20dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="0"
+        android:textColor="#000000"
+        android:id="@+id/diane_scoreview"
+        android:background="@drawable/orange_button"
+        android:layout_below="@+id/diane_textview"
+        android:layout_alignStart="@+id/diane_textview" />
+
+    <TextView
+        android:layout_width="32dp"
+        android:layout_height="20dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="0"
+        android:background="@drawable/orange_button"
+        android:textColor="#000000"
+        android:id="@+id/mikey_scoreview"
+        android:layout_below="@+id/sloth_diane"
+        android:layout_alignEnd="@+id/sloth_mike" />
+
+    <TextView
+        android:layout_width="32dp"
+        android:layout_height="20dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:gravity="center_horizontal|center_vertical"
+        android:background="@drawable/orange_button"
+        android:text="0"
+        android:textColor="#000000"
+        android:id="@+id/jamie_scoreview"
+        android:layout_alignTop="@+id/jamie_textview"
+        android:layout_alignStart="@+id/sloth_jamie" />
+
+    <TextView
+        android:layout_width="32dp"
+        android:layout_height="30dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="0"
+        android:layout_marginRight="60dp"
+        android:background="@drawable/blue_button"
+        android:textColor="#FFF000"
+        android:gravity="center_vertical|center_horizontal"
+        android:id="@+id/hearts_player_score_view"
+        android:layout_above="@+id/current_hand_space"
+        android:layout_alignParentEnd="true" />
+
+
+    <!--android:layout_marginTop="110dp"-->
+        <!--android:layout_marginLeft="150dp"-->
+        <!--android:layout_marginRight="150dp"-->
+        <!--android:layout_marginBottom="130dp"-->
+
+    <!--<ImageView-->
+        <!--android:layout_width="60dp"-->
+        <!--android:layout_height="81dp"-->
+        <!--android:id="@+id/imageView7"-->
+        <!--android:background="@drawable/spades_ace_suite1"-->
+
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_marginStart="310dp">-->
+
+    <!--</ImageView>-->
+
+    <!--<ImageView-->
+        <!--android:layout_width="60dp"-->
+        <!--android:layout_height="81dp"-->
+        <!--android:scaleType="centerInside"-->
+        <!--android:id="@+id/imageView5"-->
+        <!--android:background="@drawable/clubs_ace_suite1"-->
+
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_marginStart="230dp">-->
+
+    <!--</ImageView>-->
+
+    <!--<ImageView-->
+        <!--android:layout_width="60dp"-->
+        <!--android:layout_height="81dp"-->
+        <!--android:id="@+id/imageView4"-->
+        <!--android:background="@drawable/diamonds_ace_suite1"-->
+
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_marginBottom="130dp">-->
+
+    <!--</ImageView>-->
+
+    <!--<ImageView-->
+        <!--android:layout_width="60dp"-->
+        <!--android:layout_height="81dp"-->
+        <!--android:maxWidth="60dp"-->
+        <!--android:maxHeight="81dp"-->
+        <!--android:id="@+id/testimageview2"-->
+        <!--android:background="@drawable/hearts_ace_suite1"-->
+
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginTop="110dp">-->
+    <!--</ImageView>-->
+
+    <!--CARD PROPERTIES:-->
+        <!--w = 958px-->
+        <!--h = 1300px-->
+        <!--w:h = 0.4243:0.5757 == 1:1.3568 == 0.737:1-->
+
+
+</RelativeLayout>
