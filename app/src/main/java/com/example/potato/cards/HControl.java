@@ -90,6 +90,7 @@ public class HControl extends FragmentActivity{
 
     RelativeLayout heartsGameLayout;
 
+    HashMap<Integer, ArrayList<Integer>> totalGameScoreMap = new HashMap<>();
 
     // comparator is reverse of natural order of card since we just want the highest value of a suite
     TreeMap<Card, Player> currentCardsOnTable = new TreeMap<>();
@@ -148,6 +149,14 @@ public class HControl extends FragmentActivity{
         humanTextView = (TextView) findViewById(R.id.hearts_player_score_view);
 
         ImageView settingsButton = (ImageView) findViewById(R.id.hearts_settings_button);
+        ImageView scoreButton = (ImageView) findViewById(R.id.score_button);
+
+        scoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showUpdatedScoreBoard();
+            }
+        });
 
 
 
@@ -194,6 +203,11 @@ public class HControl extends FragmentActivity{
         players[1] = new PlayerAI(2, pushRightIn, mikeyTextView);
         players[2] = new PlayerAI(3, pushDownIn, dianeTextView);
         players[3] = new PlayerAI(4, pushLeftIn, jamieTextView);
+
+
+        for (Player p: players){
+            p.setGameScore(90);
+        }
 
 
 
@@ -435,6 +449,7 @@ public class HControl extends FragmentActivity{
 //        Log.d("SCORING", "Player " + takesHand.getPlayerNumber() + " gained a score of " + tempScore);
 
         Iterator tableCardsIt = currentCardsOnTable.keySet().iterator();
+        // remove all cards from table
         while (tableCardsIt.hasNext()){
             // TODO: ADD ANIMATION TO MOVE CARDS TOWARDS WHOEVER LOST THE HAND
             Card toRemoveFromTable = (Card) tableCardsIt.next();
@@ -587,7 +602,7 @@ public class HControl extends FragmentActivity{
                                         Log.d("ROUND STUFF", "Ending round..Starting endMiniRound()");
                                         endMiniRound(suiteToPlay);
                                     }
-                                }, 100); // by default = 2000-4000ms
+                                }, 3000); // by default = 2000-4000ms
                             } else {
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
@@ -595,7 +610,7 @@ public class HControl extends FragmentActivity{
                                         Log.d("ROUND STUFF", "Ending round..Starting endMiniRound()");
                                         endMiniRound(suiteToPlay);
                                     }
-                                }, 100);
+                                }, 3000);
 
                             }
 
@@ -687,12 +702,23 @@ public class HControl extends FragmentActivity{
         });
     }
 
+    boolean gameOver;
+
+    private void showUpdatedScoreBoard(){
+        // currently it redraws the scoreboard every time scoreBoardIntent is reactivated with a static map
+        // TODO: Hide ScoreBoard activity instead of rewriting all rows for efficiency
+        if (totalGameScoreMap.size() > 0 ) {
+            scoreBoardIntent.putIntegerArrayListExtra("newscores", totalGameScoreMap.get(gameRound));
+            scoreBoardIntent.putExtra("gameround", gameRound);
+        }
+        startActivity(scoreBoardIntent);
+    }
+
     // prepares for new round or ends game if someone has >100 score
     private void newRound(){
 
-
-
         ArrayList<Integer> scores = new ArrayList<Integer>();
+        totalGameScoreMap.put(gameRound, scores); // totalgamescoremap has a reference to scores, so it'll automatically update as we update scores
 
         miniRoundTurnNumber = 0;
 
@@ -705,39 +731,52 @@ public class HControl extends FragmentActivity{
             scores.add(p.getCurrentScore()); // no need for new Integer since currentScore is just int == no reference carried over
             p.setCurrentScore(0);
 
+            Log.d("PLAYERGAMESCORE" , "Player #" + p.getPlayerNumber() + " -- " + p.getGameScore());
+
             if (p.getGameScore() >= 100){
                 gameOver = true;
-
                 win = humanPlayer.getGameScore() < 100;
             }
+
         }
 
-        scoreBoardIntent.putIntegerArrayListExtra("newscores", scores);
-        startActivity(scoreBoardIntent);
+        showUpdatedScoreBoard();
+
 
 
         if (gameOver){
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    finish();
-                    onDestroy();
-                }
-            }, 10000); // ends game after 10 seconds
 
-//            endGamePopUp(win);
+                    ScoreBoard.resetTotalScores(); // need to clear static variable
+
+                    // this clears any activity on top of it on the stack after starting mainactivity
+                    Intent mainActivityIntent = new Intent(HControl.this, MainActivity.class);
+                    mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(mainActivityIntent);
+
+//                    endGamePopUp(win);
+
+
+                }
+            }, 5000); // ends game after 10 seconds
+
         }
         else{
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    nextPassingRoundStart();
+            // Checks every 0.5s to see if the user closed the scoreboard
+            try {
+                while (!ScoreBoard.isVisible()) {
+                    Thread.sleep(500);
                 }
-            }, 3000);
+            } catch (InterruptedException e) {}
+            nextPassingRoundStart();
+
         }
 
 
     }
+
 
 
     boolean playerPlayedAlready = false;
@@ -1180,9 +1219,12 @@ public class HControl extends FragmentActivity{
 
     @Override
     protected void onPause() {
-        super.onPause();
-        MusicControl.leavingClass();
 
+        if (!gameOver) {
+            super.onPause();
+        }
+
+        MusicControl.leavingClass();
     }
 
     @Override

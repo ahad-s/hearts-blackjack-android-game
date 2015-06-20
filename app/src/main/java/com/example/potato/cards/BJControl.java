@@ -28,6 +28,8 @@ import java.util.HashMap;
  */
 public class BJControl extends Activity {
 
+    // TODO: FIX MEMORY LEAK FROM RECURSIVE PHASEFOUR()
+
     /*
     Phase 1: Betting phase -- can only control how much to bet then starts next phase after pressing "DEAL"
     Phase 2: Check phase -- your cards displayed + 1 of dealer card displayed, can "Hit" or "Stand" or "Surrender" or "Double" (double = doubles bet amount + adds new card)

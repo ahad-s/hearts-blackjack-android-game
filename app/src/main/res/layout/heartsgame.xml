@@ -8,6 +8,8 @@
     android:id="@+id/heartsgame_layout">
 
 
+
+
     <ImageView
         android:layout_width="90dp"
         android:layout_height="80dp"
@@ -178,7 +180,7 @@
 
     <TextView
         android:layout_width="32dp"
-        android:layout_height="20dp"
+        android:layout_height="30dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:gravity="center_horizontal|center_vertical"
         android:text="0"
@@ -190,7 +192,7 @@
 
     <TextView
         android:layout_width="32dp"
-        android:layout_height="20dp"
+        android:layout_height="30dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:gravity="center_vertical|center_horizontal"
         android:text="0"
@@ -202,7 +204,7 @@
 
     <TextView
         android:layout_width="32dp"
-        android:layout_height="20dp"
+        android:layout_height="30dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:gravity="center_horizontal|center_vertical"
         android:background="@drawable/orange_button"
@@ -224,6 +226,17 @@
         android:id="@+id/hearts_player_score_view"
         android:layout_above="@+id/current_hand_space"
         android:layout_alignParentEnd="true" />
+
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:id="@+id/score_button"
+        android:background="@drawable/score_button"
+        android:layout_alignBottom="@id/diane_scoreview"
+        android:layout_alignEnd="@+id/sloth_mike">
+
+    </ImageView>
 
 
     <!--android:layout_marginTop="110dp"-->

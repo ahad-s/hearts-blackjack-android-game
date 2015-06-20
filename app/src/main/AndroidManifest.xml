@@ -11,7 +11,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/chibi_sloth_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:largeHeap="true">

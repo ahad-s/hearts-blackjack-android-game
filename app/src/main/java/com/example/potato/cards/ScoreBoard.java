@@ -12,12 +12,17 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by Potato on 6/7/2015.
  */
 public class ScoreBoard extends Activity{
 
+
+    private static HashMap<Integer, ArrayList<Integer>> totalScores = new HashMap<>();
+
+    private static volatile boolean visible = false; // volatile == keeps it synchronized across threads (i.e. from HControl to this, if implemented)
 
     // assigning views and stuff
     HashMap<Integer, Integer> scores; // player_number, score_in_round
@@ -48,12 +53,22 @@ public class ScoreBoard extends Activity{
         getWindowManager().getDefaultDisplay().getMetrics(display);
 
         double popUpPercentX = 0.8; // easy to adjust here
-        double popUpPercentY = 0.6;
+        double popUpPercentY = 0.9;
 
         getWindow().setLayout((int) (display.widthPixels * popUpPercentX), (int) (display.heightPixels * popUpPercentY)); // sets the popUp's w/h to x% of original res
 
 
     }
+
+    public static void resetTotalScores(){
+        totalScores = new HashMap<>();
+    }
+
+    public static void retrieveNewScores(){
+
+    }
+
+
 
 
     // adds rows and automatically sets a "total score" row at the end in red
@@ -125,10 +140,16 @@ public class ScoreBoard extends Activity{
 
     }
 
+    public static boolean isVisible() {
+        return visible;
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         MusicControl.leavingClass();
+
+        visible = false;
 
     }
 
@@ -136,8 +157,30 @@ public class ScoreBoard extends Activity{
     protected void onResume() {
         super.onResume();
         MusicControl.inClass(this);
+
+        visible = true;
+
         ArrayList<Integer> toAdd = getIntent().getIntegerArrayListExtra("newscores");
-        if (toAdd.size() > 0)
-            addNewRow(toAdd);
+        int currentGameRound = getIntent().getIntExtra("gameround", MainActivity.DEFAULT_INT_VALUE);
+
+        // adds all rows from the static map totalScores
+        if (toAdd != null) {
+            totalScores.put(currentGameRound, toAdd);
+            Iterator totalScoresIter = totalScores.keySet().iterator();
+
+            while (totalScoresIter.hasNext()) {
+                Integer tempRound = (Integer) totalScoresIter.next();
+                ArrayList tempScoreList = (ArrayList) totalScores.get(tempRound);
+                if (tempScoreList.size() > 0)
+                    addNewRow(tempScoreList);
+            }
+        }
+        else{
+            ArrayList<Integer> tempList = new ArrayList<>();
+            for (int i = 0; i < 4; i++){
+                tempList.add(0);
+            }
+            addNewRow(tempList);
+        }
     }
 }
