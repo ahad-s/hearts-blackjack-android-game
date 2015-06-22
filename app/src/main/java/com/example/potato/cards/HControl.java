@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
 /**
@@ -93,7 +95,7 @@ public class HControl extends FragmentActivity{
     HashMap<Integer, ArrayList<Integer>> totalGameScoreMap = new HashMap<>();
 
     // comparator is reverse of natural order of card since we just want the highest value of a suite
-    TreeMap<Card, Player> currentCardsOnTable = new TreeMap<>();
+    LinkedHashMap<Card, Player> currentCardsOnTable = new LinkedHashMap<>();
 
     TextView jamieTextView;
     TextView dianeTextView;
@@ -205,9 +207,10 @@ public class HControl extends FragmentActivity{
         players[3] = new PlayerAI(4, pushLeftIn, jamieTextView);
 
 
-        for (Player p: players){
-            p.setGameScore(90);
-        }
+        // to test end stuff
+//        for (Player p: players){
+//            p.setGameScore(90);
+//        }
 
 
 
@@ -320,6 +323,7 @@ public class HControl extends FragmentActivity{
         TranslateAnimation moveToTableAnim = new TranslateAnimation(0, deltaX, 0, -deltaY );
         moveToTableAnim.setFillAfter(true);
         moveToTableAnim.setDuration(400);
+//        moveToTableAnim.setInterpolator(new LinearInterpolator()); // TODO: CHANGE THIS ALONG WITH AI
 
         cardButton.startAnimation(moveToTableAnim);
 
@@ -401,18 +405,23 @@ public class HControl extends FragmentActivity{
     // decide who gets the points - hardcoded since only 4 cards in play
     // mini round = after people play 4 cards
     private void endMiniRound(String originalSuite){
+
+        originalSuite = mustPlaySuite;
         int tempScore = 0;
         Iterator scoreCounterIter = currentCardsOnTable.keySet().iterator();
 
         while (scoreCounterIter.hasNext()){
             Card tempC = (Card) scoreCounterIter.next();
-            tempC.getImage().setVisibility(View.GONE);
+
+//            tempC.getImage().setVisibility(View.GONE); // TAKES UP TOO MUCH MEMORY, NEED TO REMOVE!!
+
             if (tempC.getSuite().equalsIgnoreCase("hearts")){
                 tempScore++;
             }
             else if (tempC.getSuite().equalsIgnoreCase("spades") && tempC.getStringValue().equalsIgnoreCase("queen")){
                 tempScore += 13;
             }
+            tempC.getImage().setImageBitmap(null);
         }
 
         // starts the cycle all over again -- NOT HERE
@@ -423,17 +432,27 @@ public class HControl extends FragmentActivity{
         Iterator tableSetIter = currentCardsOnTable.keySet().iterator();
         Card highestKey = (Card) tableSetIter.next();
 
+        Log.d("ENDROUND0", "current suite -- " + originalSuite);
+
+        Iterator tempit = currentCardsOnTable.keySet().iterator();
+
+        while (tempit.hasNext()){
+            Card tempk = (Card) tempit.next();
+            Log.d("ENDROUND1", "cards on table -- " + tempk.getSuite() + " -- " + tempk.getStringValue());
+        }
 
         while (tableSetIter.hasNext()){
             Card tempKey = (Card) tableSetIter.next();
 
             if (!(highestKey.getSuite().equalsIgnoreCase(originalSuite))){
+                Log.d("ENDROUND2", "old highestcard == " + highestKey.toString() + " -- new highestcard == " + tempKey.toString());
                 highestKey = tempKey;
                 continue;
             }
 
             if (highestKey.getSuite().equalsIgnoreCase(originalSuite) && tempKey.getSuite().equalsIgnoreCase(originalSuite)){
                 if (!(highestKey.getIntValue() > tempKey.getIntValue())) {
+                    Log.d("ENDROUND3", "old highestcard == " + highestKey.toString() + " -- new highestcard == " + tempKey.toString());
                     highestKey = tempKey;
                 }
             }
@@ -660,6 +679,9 @@ public class HControl extends FragmentActivity{
 //        tempImage.bringToFront();
         addCardToTable(tempImage, bot);
 
+        // TODO: ADD BETTER INTERPOLATORS FOR AI + HUMAN
+//        bot.getPlayerAnimation().setInterpolator(new LinearInterpolator());
+
         tempImage.startAnimation(bot.getPlayerAnimation());
 
 
@@ -676,30 +698,34 @@ public class HControl extends FragmentActivity{
 
     // to implement if shutting off game is annoying
     private void endGamePopUp(boolean win){
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HControl.this);
         if (win)
-            dialogBuilder.setTitle("WOOHOO!");
+            dialogBuilder.setTitle("WOOHOO! YOU WON!");
         else
             dialogBuilder.setTitle("A+ for effort!");
         dialogBuilder.setMessage("Do you want to play again?");
         dialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                onPause();
-                onStop();
-                onRestart();
+                Intent heartsActivityIntent = new Intent(HControl.this, HControl.class);
+                heartsActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(heartsActivityIntent);
             }
         });
         dialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                onPause();
-                onStop();
-                onDestroy();
-                startActivity(new Intent(HControl.this, MainActivity.class));
+                Intent mainActivityIntent = new Intent(HControl.this, MainActivity.class);
+                mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(mainActivityIntent);
 
             }
         });
+
+        dialogBuilder.setIcon(R.drawable.blue_button);
+
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
     }
 
     boolean gameOver;
@@ -714,6 +740,10 @@ public class HControl extends FragmentActivity{
         startActivity(scoreBoardIntent);
     }
 
+
+    boolean win = false;
+    boolean showingDialog = false;
+
     // prepares for new round or ends game if someone has >100 score
     private void newRound(){
 
@@ -722,7 +752,7 @@ public class HControl extends FragmentActivity{
 
         miniRoundTurnNumber = 0;
 
-        boolean win = false;
+        win = false;
         boolean gameOver = false;
         makeAvailable = true;
 
@@ -740,36 +770,57 @@ public class HControl extends FragmentActivity{
 
         }
 
+        for (int i = 0; i < humanPlayer.getCardsInHand().size(); i++){
+            ImageButton tempButton =  humanPlayer.getCardsInHand().get(i).getImage();
+            tempButton.setVisibility(View.GONE);
+        }
+
         showUpdatedScoreBoard();
 
 
 
         if (gameOver){
+            showingDialog = false;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
 
-                    ScoreBoard.resetTotalScores(); // need to clear static variable
+//                    if (!showingDialog) {
+//                        showingDialog = true;
 
-                    // this clears any activity on top of it on the stack after starting mainactivity
-                    Intent mainActivityIntent = new Intent(HControl.this, MainActivity.class);
-                    mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(mainActivityIntent);
+                        ScoreBoard.resetTotalScores(); // need to clear static variable
 
-//                    endGamePopUp(win);
+                        // this clears any activity on top of it on the stack after starting mainactivity
+//                    Intent mainActivityIntent = new Intent(HControl.this, MainActivity.class);
+//                    mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                    startActivity(mainActivityIntent);
+
+                        endGamePopUp(win);
+//                    }
 
 
                 }
-            }, 5000); // ends game after 10 seconds
+            }, 3000); // ends game after 10 seconds
+
+//            while (ScoreBoard.isVisible()){
+//                try {
+//                    Thread.sleep(500);
+//                } catch (InterruptedException e){}
+//            }
+//
+//            if (!showingDialog) {
+//                ScoreBoard.resetTotalScores();
+//                endGamePopUp(win);
+//            }
 
         }
         else{
             // Checks every 0.5s to see if the user closed the scoreboard
-            try {
-                while (!ScoreBoard.isVisible()) {
-                    Thread.sleep(500);
-                }
-            } catch (InterruptedException e) {}
+//            try {
+//                while (!ScoreBoard.isVisible()) {
+//                    Thread.sleep(500);
+//                }
+//            } catch (InterruptedException e) {}
             nextPassingRoundStart();
 
         }
@@ -1105,7 +1156,7 @@ public class HControl extends FragmentActivity{
     private Card getCardAssociatedWithImage(Player humanPlayer, View v){
         for (int i = 0; i < humanPlayer.getCardsInHand().size(); i++){
             if (humanPlayer.getCardsInHand().get(i).hasThisImage((ImageButton) v)) {
-                Log.d("RETURNING", humanPlayer.getCardsInHand().get(i).getSuite());
+//                Log.d("RETURNING", humanPlayer.getCardsInHand().get(i).getSuite());
                 return humanPlayer.getCardsInHand().get(i);
             }
         }

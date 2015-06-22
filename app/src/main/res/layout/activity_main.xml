@@ -67,4 +67,14 @@
         android:contentDescription="Hearts!"
         />
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:text="REQUEST MONEY"
+        android:background="@drawable/green_button"
+        android:id="@+id/request_money_button"
+        android:layout_alignTop="@+id/instructions_button"
+        android:layout_toEndOf="@+id/settings_button" />
+
 </RelativeLayout>

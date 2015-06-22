@@ -2,14 +2,10 @@ package com.example.potato.cards;
 
 /*
 Name: Ahad Shoaib
-Date: 6/15/2015
-Program: Blackjack and Hearts Suite (aka XxX_Z_c4rdz_Z_XxX)
-Description: Play blackjack and hearts! Win money and feel good about beating a crappy AI!
 Notes:
--AI is quite basic at the moment
--If you run out of money in blackjack, must exit game to gain more money -- there is no prompt for this
+-AI is quite basic at the moment :( inspired by Windows' heart's AI since I used to play it a bunch before
+-If you run out of money in blackjack, must exit + restart game to gain more money -- there is no prompt for this
 -transitioning between turns in hearts isn't that smooth at the moment, and have to respect the rules since there aren't too many 'safety' measures in place currently
--ALSO, I might've forgotten to uncomment some of the onPause/onResume stuff, but any activities that contain those should be playing the elevator music
  */
 
 import android.app.Activity;
@@ -24,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
@@ -45,11 +42,15 @@ public class MainActivity extends Activity {
     private Button settingsButton;
     private ImageButton bjImageButton;
     private ImageButton hImageButton;
+    private Button requestMoneyButton;
 
     MediaPlayer player; // need to be able to control this from settings
     int totalMoney;
     int suite = 1;
     int maxSuite = 3; // change this depending on how many suites are available
+    int tempMoney;
+    SharedPreferences.Editor editor;
+    SharedPreferences userSharedPref;
 
     private boolean clickHearts = false;
     private boolean clickBlackjack = true; // is selected by default since its single player only + first option
@@ -61,15 +62,15 @@ public class MainActivity extends Activity {
 
 
         // SHARED PREFERENCES STUFF, STORES VALUES ACROSS DEVICE AND ACROSS SAVES
-        SharedPreferences userSharedPref = getSharedPreferences(DEFAULT_SHARED_DATABASE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = userSharedPref.edit();
+        userSharedPref = getSharedPreferences(DEFAULT_SHARED_DATABASE, Context.MODE_PRIVATE);
+        editor = userSharedPref.edit();
 
         if (!userSharedPref.contains("current_suite")){
             editor.putInt("current_suite", 1);
             editor.commit();
         }
 
-        int tempMoney = userSharedPref.getInt("current_money", DEFAULT_STARTING_MONEY);
+        tempMoney = userSharedPref.getInt("current_money", DEFAULT_STARTING_MONEY);
 
         Log.d("TEMPMONEY IS..." , "@@@@ " + tempMoney);
         Log.d("SHOULD BE TRUE...", "#### " + (tempMoney == DEFAULT_INT_VALUE));
@@ -85,6 +86,7 @@ public class MainActivity extends Activity {
 
 
         // settings listeners and stuff to navigate to other activities
+        requestMoneyButton = (Button) findViewById(R.id.request_money_button);
         playButton = (Button) findViewById(R.id.play_button);
         settingsButton = (Button) findViewById(R.id.settings_button);
 
@@ -108,6 +110,22 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, SettingsMenu.class));
+            }
+        });
+
+        requestMoneyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tempMoney = userSharedPref.getInt("current_money", DEFAULT_INT_VALUE);
+                if (tempMoney <= DEFAULT_INT_VALUE){
+                    editor.putInt("current_money", 500);
+                    editor.commit();
+                    Toast.makeText(getApplicationContext(), "$500 has been added for you to play with!", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Hey! Stop being greedy! Wait until you're cleaned!", Toast.LENGTH_LONG).show();
+
+                }
             }
         });
 

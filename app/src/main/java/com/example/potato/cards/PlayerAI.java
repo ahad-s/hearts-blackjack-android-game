@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.TreeMap;
 import java.util.Iterator;
 
@@ -183,7 +184,7 @@ public class PlayerAI extends Player{
 
     // for now, just basic ai -- 1) play lowest card of available suite, 2) otherwise play a heart if turn > 1, 3) play highest card from other suite (diamonds first, then clubs)
     @Override
-    public Card startTurn(int turnNumber, String suiteToPlay, boolean heartsBroken, TreeMap<Card, Player> onTable) {
+    public Card startTurn(int turnNumber, String suiteToPlay, boolean heartsBroken, LinkedHashMap<Card, Player> onTable) {
 
         // this whole if clause is for when AI is first person to play a card
         if (suiteToPlay.equalsIgnoreCase("none")){ // meaning it's your turn

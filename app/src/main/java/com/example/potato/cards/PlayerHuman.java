@@ -6,6 +6,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
 /**
@@ -85,7 +86,7 @@ public class PlayerHuman extends Player{
     }
 
     @Override
-    public Card startTurn(int turnNum, String suiteToPlay, boolean heartsBroken, TreeMap<Card, Player> onTable) { // ?? no
+    public Card startTurn(int turnNum, String suiteToPlay, boolean heartsBroken, LinkedHashMap<Card, Player> onTable) { // ?? no
         return null;
     }
 

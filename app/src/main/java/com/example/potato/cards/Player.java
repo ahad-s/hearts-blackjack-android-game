@@ -5,6 +5,7 @@ import android.view.animation.Animation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -82,7 +83,7 @@ public abstract class Player{
 
     abstract ArrayList<Card> getCardsToPass();
 
-    abstract public Card startTurn(int turnNumber, String mustPlaySuite, boolean heartsBroken, TreeMap<Card, Player> onTable); // this will just return the card that the AI should play
+    abstract public Card startTurn(int turnNumber, String mustPlaySuite, boolean heartsBroken, LinkedHashMap<Card, Player> onTable); // this will just return the card that the AI should play
 
 
     protected void passCardsTo(ArrayList<Card> toAddFrom, Player receiver){

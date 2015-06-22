@@ -668,6 +668,9 @@ public class BJControl extends Activity {
         if (dealerScore < 17 && dealerScore < currentPlayer.getCurrentHandScore())
             addNewCard("dealer");
 
+        if (dealerScore < 17 && dealerScore > currentPlayer.getCurrentHandScore())
+            loseGameImage();
+
 
         if (dealerScore > 21){
             winGameImage();
