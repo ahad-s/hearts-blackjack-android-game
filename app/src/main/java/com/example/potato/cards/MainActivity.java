@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -37,7 +38,7 @@ public class MainActivity extends Activity {
     final public static String DEFAULT_SHARED_DATABASE = "database";
     final public static int DEFAULT_STARTING_MONEY = 1000;
 
-    private Button playButton;
+//    private Button playButton;
     private Button instructionsButton;
     private Button settingsButton;
     private ImageButton bjImageButton;
@@ -54,6 +55,10 @@ public class MainActivity extends Activity {
 
     private boolean clickHearts = false;
     private boolean clickBlackjack = true; // is selected by default since its single player only + first option
+
+    int hDoubleClick = 0;
+    int bjDoubleClick = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +92,7 @@ public class MainActivity extends Activity {
 
         // settings listeners and stuff to navigate to other activities
         requestMoneyButton = (Button) findViewById(R.id.request_money_button);
-        playButton = (Button) findViewById(R.id.play_button);
+//        playButton = (Button) findViewById(R.id.play_button);
         settingsButton = (Button) findViewById(R.id.settings_button);
 
         hImageButton = (ImageButton) findViewById(R.id.hearts_menu);
@@ -95,15 +100,15 @@ public class MainActivity extends Activity {
 
         bjImageButton.setColorFilter(Color.argb(125, 0, 0, 0)); // set this as originally selected game
 
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (clickHearts)
-                    startActivity(new Intent(MainActivity.this, HControl.class));
-                else if (clickBlackjack)
-                    startActivity(new Intent(MainActivity.this, BJControl.class));
-            }
-        });
+//        playButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (clickHearts)
+//                    startActivity(new Intent(MainActivity.this, HControl.class));
+//                else if (clickBlackjack)
+//                    startActivity(new Intent(MainActivity.this, BJControl.class));
+//            }
+//        });
 
 
         settingsButton.setOnClickListener(new View.OnClickListener() {
@@ -120,24 +125,61 @@ public class MainActivity extends Activity {
                 if (tempMoney <= DEFAULT_INT_VALUE){
                     editor.putInt("current_money", 500);
                     editor.commit();
-                    Toast.makeText(getApplicationContext(), "$500 has been added for you to play with!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "$500 has been added for you to play with!", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), "Hey! Stop being greedy! Wait until you're cleaned!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Hey! Stop being greedy! Wait until you're cleaned!", Toast.LENGTH_SHORT).show();
 
                 }
             }
         });
 
+
         hImageButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                setClickHearts();
+                hDoubleClick++;
+                Handler handler = new Handler();
+
+                // this can be run later on in the method to reset the 'click'
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        hDoubleClick = 0;
+                    }
+                };
+
+                if (hDoubleClick == 1){
+                    setClickHearts();
+                    handler.postDelayed(runnable, 350); // 350 = ms in which the user can double click to start game
+                }
+                else if (hDoubleClick == 2){
+                    hDoubleClick = 0;
+                    startActivity(new Intent(MainActivity.this, HControl.class));
+                }
             }
         });
 
         bjImageButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                setClickBlackjack();
+                bjDoubleClick++;
+
+                Handler handler = new Handler();
+
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        bjDoubleClick = 0;
+                    }
+                };
+
+                if (bjDoubleClick == 1){
+                    setClickBlackjack();
+                    handler.postDelayed(runnable, 350); // 350 = ms in which the user can double click to start game
+                }
+                else if (bjDoubleClick == 2){
+                    bjDoubleClick = 0;
+                    startActivity(new Intent(MainActivity.this, BJControl.class));
+                }
             }
         });
 

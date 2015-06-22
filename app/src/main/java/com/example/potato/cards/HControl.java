@@ -156,7 +156,7 @@ public class HControl extends FragmentActivity{
         scoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showUpdatedScoreBoard();
+                showUpdatedScoreBoard("old");
             }
         });
 
@@ -406,6 +406,8 @@ public class HControl extends FragmentActivity{
     // mini round = after people play 4 cards
     private void endMiniRound(String originalSuite){
 
+        delay = 0;
+
         originalSuite = mustPlaySuite;
         int tempScore = 0;
         Iterator scoreCounterIter = currentCardsOnTable.keySet().iterator();
@@ -421,6 +423,7 @@ public class HControl extends FragmentActivity{
             else if (tempC.getSuite().equalsIgnoreCase("spades") && tempC.getStringValue().equalsIgnoreCase("queen")){
                 tempScore += 13;
             }
+
             tempC.getImage().setImageBitmap(null);
         }
 
@@ -516,6 +519,8 @@ public class HControl extends FragmentActivity{
 
     // since this is called quite often, it is easy to change onclicklisteners
     private void humanPlayerSpecialTurn(final int miniRoundTurnNumber, int inc,  final String suiteToPlay, boolean heartsBroken){
+
+        delay = 0; // sets delay for the cards passing around
 
         if (gameRound == 2){
             System.out.println("testing2");
@@ -644,50 +649,67 @@ public class HControl extends FragmentActivity{
     }
 
     int delay = 0;
+    boolean playerHasPlayedForAI = false;
 
     // sets translation for ai player card to come in its respective side
-    private void aiPlayerTurn(Card cardToPlay, final Player bot){
+    private void aiPlayerTurn(final Card cardToPlay, final Player bot){
+
 
         delay++;
 
-        final ImageButton tempImage = cardToPlay.getImage();
-
-        String ident = cardToPlay.getSuite() + "_" + cardToPlay.getStringValue() + "_suite" + gameDeck.getCurrentSuite();
-        tempImage.setBackground(getResources().getDrawable(getResources().getIdentifier(ident, "drawable", getPackageName())));
-
-        heartsGameLayout.addView(tempImage);
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {}
 
 
-        // use layoutparams from other cards
-        RelativeLayout.LayoutParams newParams = new RelativeLayout.LayoutParams(Math.round(cardSpaceLayoutHeight * 0.737f), Math.round(cardSpaceLayoutHeight));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final ImageButton tempImage = cardToPlay.getImage();
 
-        newParams.addRule(RelativeLayout.CENTER_VERTICAL);
-        newParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                String ident = cardToPlay.getSuite() + "_" + cardToPlay.getStringValue() + "_suite" + gameDeck.getCurrentSuite();
+                tempImage.setBackground(getResources().getDrawable(getResources().getIdentifier(ident, "drawable", getPackageName())));
 
-        tempImage.setLayoutParams(newParams);
+                heartsGameLayout.addView(tempImage);
 
-        if (bot.getPlayerNumber() == 2) {
-            tempImage.setX(tempImage.getX() - 30 * dm.density);
-        }
-        else if (bot.getPlayerNumber() == 3){
-            tempImage.setY(tempImage.getY() - 30 * dm.density);
-        }
-        else if (bot.getPlayerNumber() == 4) {
-            tempImage.setX(tempImage.getX() + 30 * dm.density);
-        }
+
+                // use layoutparams from other cards
+                RelativeLayout.LayoutParams newParams = new RelativeLayout.LayoutParams(Math.round(cardSpaceLayoutHeight * 0.737f), Math.round(cardSpaceLayoutHeight));
+
+                newParams.addRule(RelativeLayout.CENTER_VERTICAL);
+                newParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+                tempImage.setLayoutParams(newParams);
+
+                if (bot.getPlayerNumber() == 2) {
+                    tempImage.setX(tempImage.getX() - 30 * dm.density);
+                } else if (bot.getPlayerNumber() == 3) {
+                    tempImage.setY(tempImage.getY() - 30 * dm.density);
+                } else if (bot.getPlayerNumber() == 4) {
+                    tempImage.setX(tempImage.getX() + 30 * dm.density);
+                }
 
 //        tempImage.bringToFront();
-        addCardToTable(tempImage, bot);
+
+
+                addCardToTable(tempImage, bot);
+                tempImage.startAnimation(bot.getPlayerAnimation());
+
+            }
+        }, 250 * delay);
+
+        Log.d("DELAY CURRENTLY", "DELAY -- " + delay);
+
 
         // TODO: ADD BETTER INTERPOLATORS FOR AI + HUMAN
 //        bot.getPlayerAnimation().setInterpolator(new LinearInterpolator());
 
-        tempImage.startAnimation(bot.getPlayerAnimation());
 
+        if (delay == 3) {
 
-
-        if (delay == 3)
             delay = 0;
+
+        }
 
 
         Log.d("BOT POWER", "Player " + bot.getPlayerNumber() + " is playing card: " + cardToPlay.toString());
@@ -730,12 +752,27 @@ public class HControl extends FragmentActivity{
 
     boolean gameOver;
 
-    private void showUpdatedScoreBoard(){
+    // if old == previous round's board, if new == new round's board
+    private void showUpdatedScoreBoard(String oldOrNew){
         // currently it redraws the scoreboard every time scoreBoardIntent is reactivated with a static map
         // TODO: Hide ScoreBoard activity instead of rewriting all rows for efficiency
-        if (totalGameScoreMap.size() > 0 ) {
-            scoreBoardIntent.putIntegerArrayListExtra("newscores", totalGameScoreMap.get(gameRound));
-            scoreBoardIntent.putExtra("gameround", gameRound);
+
+        // if checking scoreboard after the end of a round
+        if (oldOrNew.equalsIgnoreCase("new")) {
+            if (totalGameScoreMap.size() > 0) {
+                scoreBoardIntent.putIntegerArrayListExtra("newscores", totalGameScoreMap.get(gameRound));
+                scoreBoardIntent.putExtra("gameround", gameRound);
+            }
+        }
+        else{ // if just checking scoreboard in the middle of the game == "old" or anything other than "new"
+            if (totalGameScoreMap.size() > 0) {  // if higher than first round, will get the updated scores from previous round
+                scoreBoardIntent.putIntegerArrayListExtra("newscores", totalGameScoreMap.get(gameRound - 1));
+                scoreBoardIntent.putExtra("gameround", gameRound - 1);
+            }
+            else{ // if first round ever, so nothing will be in totalgamescoremap, so everything should be 0-0-0-0
+                scoreBoardIntent.putIntegerArrayListExtra("newscores", totalGameScoreMap.get(gameRound));
+                scoreBoardIntent.putExtra("gameround", gameRound);
+            }
         }
         startActivity(scoreBoardIntent);
     }
@@ -775,7 +812,7 @@ public class HControl extends FragmentActivity{
             tempButton.setVisibility(View.GONE);
         }
 
-        showUpdatedScoreBoard();
+        showUpdatedScoreBoard("new");
 
 
 

@@ -35,37 +35,50 @@
         android:layout_height="40dp"
         android:layout_margin="5dp"
         android:text="Play!"
+        android:visibility="gone"
         android:alpha=".8"
         android:background="@drawable/orangeish_menu_button"
         android:id="@+id/play_button"
         android:layout_above="@+id/instructions_button"
         android:layout_centerHorizontal="true" />
 
-    <ImageButton
-        android:layout_width="530dp"
-        android:layout_height="195dp"
-        android:src="@drawable/mario_blackjack"
-        android:scaleType="fitXY"
-        android:layout_margin="5dp"
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="425dp"
+        android:orientation="vertical"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/blackjack_menu"
-        android:contentDescription="Blackjack!"/>
+
+        android:layout_alignParentStart="true">
+
+        <ImageButton
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/mario_blackjack"
+            android:scaleType="fitXY"
+            android:layout_weight="1"
+            android:layout_marginBottom="5dp"
+
+            android:layout_gravity="top"
+            android:id="@+id/blackjack_menu"
+            android:contentDescription="Blackjack!"/>
 
 
-    <ImageButton
-        android:layout_width="530dp"
-        android:layout_height="195dp"
-        android:src="@drawable/heartslogo"
-        android:scaleType="fitXY"
-        android:layout_margin="5dp"
-        android:layout_above="@+id/play_button"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/hearts_menu"
-        android:contentDescription="Hearts!"
-        />
+        <ImageButton
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scaleType="fitXY"
+            android:background="@drawable/heartslogo"
+            android:layout_weight="1"
+            android:layout_marginTop="5dp"
+
+            android:id="@+id/hearts_menu"
+            android:contentDescription="Hearts!"
+            android:layout_gravity="bottom" />
+
+
+
+    </LinearLayout>
 
     <Button
         style="?android:attr/buttonStyleSmall"
