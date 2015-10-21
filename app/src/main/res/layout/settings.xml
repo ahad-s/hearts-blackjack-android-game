@@ -44,43 +44,33 @@
     </RelativeLayout>
 
 
+
+
     <ImageView
-        android:layout_width="150dp"
-        android:layout_height="180dp"
+        android:layout_width="100dp"
+        android:layout_height="150dp"
+        android:id="@+id/suite_color_image"
         android:background="@drawable/hearts_king_suite1"
-        android:id="@+id/change_suite"
-        android:visibility="gone"
-        android:layout_centerVertical="true"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tri_button_right"
-        android:visibility="gone"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/triangle_button_right"
-        android:layout_alignBottom="@+id/change_suite"
-        android:layout_marginBottom="65dp"
-        android:layout_marginRight="10dp"
-        android:layout_centerVertical="true">
-
-    </Button>
+        android:id="@+id/left_button"
+        android:background="@drawable/triangle_button_left"
+        android:layout_alignBottom="@+id/suite_color_image"
+        android:layout_toStartOf="@+id/suite_color_image"
+        android:layout_marginBottom="34dp" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:id="@+id/tri_button_left"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:background="@drawable/triangle_button_left"
-        android:layout_marginBottom="65dp"
-        android:layout_alignBottom="@id/change_suite"
-        />
+        android:id="@+id/right_button"
+        android:background="@drawable/triangle_button_right"
+        android:layout_alignTop="@+id/left_button"
+        android:layout_toEndOf="@+id/suite_color_image" />
 
 
 </RelativeLayout>

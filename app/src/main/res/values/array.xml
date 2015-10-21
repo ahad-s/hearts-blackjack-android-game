@@ -117,7 +117,7 @@
 
     </string-array>
 
-    <string name="suite_3_cards">
+    <string-array name="suite_3_cards">
 
         <item>clubs_ace_suite3</item>
         <item>clubs_eight_suite3</item>
@@ -172,6 +172,6 @@
         <item>spades_three_suite3</item>
         <item>spades_two_suite3</item>
 
-    </string>
+    </string-array>
 
 </resources>

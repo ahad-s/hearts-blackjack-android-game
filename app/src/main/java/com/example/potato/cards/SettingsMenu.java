@@ -33,7 +33,21 @@ public class SettingsMenu extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(MainMenu.DEFAULT_SHARED_DATABASE, MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        try{
+            if (getIntent().getStringExtra("orientation").equalsIgnoreCase("horiz"))
+                setContentView(R.layout.settings_horiz);
+            else
+                setContentView(R.layout.settings);
+
+        } catch (NullPointerException e){
+            setContentView(R.layout.settings);
+        }
+
+
 
         display = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(display);
@@ -49,15 +63,15 @@ public class SettingsMenu extends Activity{
         int currVol = manager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
         // shares data across all activities
-        SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.DEFAULT_SHARED_DATABASE, MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
-        suiteNow = sharedPreferences.getInt("current_suite", MainActivity.DEFAULT_INT_VALUE);
+
+        suiteNow = sharedPreferences.getInt("current_suite", MainMenu.DEFAULT_INT_VALUE);
 
         final Drawable suiteOneDrawable = getResources().getDrawable(R.drawable.hearts_king_suite1);
         final Drawable suiteTwoDrawable = getResources().getDrawable(R.drawable.hearts_king_suite2);
+        final Drawable suiteThreeDrawable = getResources().getDrawable(R.drawable.hearts_king_suite3);
 
-        suiteChanging = (ImageView) findViewById(R.id.change_suite);
+        suiteChanging = (ImageView) findViewById(R.id.suite_color_image);
 
 
         // volume control stuff
@@ -86,28 +100,88 @@ public class SettingsMenu extends Activity{
             }
         });
 
-        Button leftTri = (Button) findViewById(R.id.tri_button_left);
-        Button rightTri = (Button) findViewById(R.id.tri_button_right);
+        Button leftTri = (Button) findViewById(R.id.left_button);
+        Button rightTri = (Button) findViewById(R.id.right_button);
+
+        switch (suiteNow){
+            case 1:
+                suiteChanging.setBackground(suiteOneDrawable);
+                break;
+            case 2:
+                suiteChanging.setBackground(suiteTwoDrawable);
+                break;
+            case 3:
+                suiteChanging.setBackground(suiteThreeDrawable);
+                break;
+        }
 
 
-        View.OnClickListener changer = new View.OnClickListener() {
+
+
+        View.OnClickListener changerRight = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if ( getResources().getResourceEntryName(suiteChanging.getId()).contains("suite1")){
-                    suiteChanging.setBackground(suiteTwoDrawable);
-                    suiteNow = 2;
+                    suiteNow++;
+                    if (suiteNow == 4)
+                        suiteNow = 1;
                     editor.putInt("current_suite", suiteNow);
                 }
                 else{
-                    suiteChanging.setBackground(suiteOneDrawable);
-                    suiteNow = 1;
+                    suiteNow++;
+                    if (suiteNow == 4)
+                        suiteNow = 1;
                     editor.putInt("current_suite", suiteNow);
+                }
+
+                switch (suiteNow){
+                    case 1:
+                        suiteChanging.setBackground(suiteOneDrawable);
+                        break;
+                    case 2:
+                        suiteChanging.setBackground(suiteTwoDrawable);
+                        break;
+                    case 3:
+                        suiteChanging.setBackground(suiteThreeDrawable);
+                        break;
                 }
             }
         };
 
-//        leftTri.setOnClickListener(changer);
-//        rightTri.setOnClickListener(changer);
+        View.OnClickListener changerLeft = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ( getResources().getResourceEntryName(suiteChanging.getId()).contains("suite1")){
+                    suiteNow--;
+                    if (suiteNow == 0)
+                        suiteNow = 3;
+                    editor.putInt("current_suite", suiteNow);
+                }
+                else{
+                    suiteNow--;
+                    if (suiteNow == 0)
+                        suiteNow = 3;
+                    editor.putInt("current_suite", suiteNow);
+                }
+
+                switch (suiteNow){
+                    case 1:
+                        suiteChanging.setBackground(suiteOneDrawable);
+                        break;
+                    case 2:
+                        suiteChanging.setBackground(suiteTwoDrawable);
+                        break;
+                    case 3:
+                        suiteChanging.setBackground(suiteThreeDrawable);
+                        break;
+                }
+            }
+        };
+
+
+
+        leftTri.setOnClickListener(changerRight);
+        rightTri.setOnClickListener(changerLeft);
 
 
 
